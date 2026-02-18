@@ -1,0 +1,190 @@
+.vendor-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.vendor-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+.vendor-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-color);
+}
+
+.vendor-stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.vendor-stat-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vendor-stat-title {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.vendor-stat-value-group {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.vendor-stat-value {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.vendor-stat-trend {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.vendor-stat-subtext {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.vendor-content-grid {
+    display: grid;
+    gap: 24px;
+}
+
+.vendor-grid-2-1 {
+    grid-template-columns: 2fr 1fr;
+}
+
+.vendor-grid-1-1 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.vendor-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.vendor-view-all {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.vendor-view-all:hover {
+    text-decoration: underline;
+}
+
+/* Weekly Sales Placeholder */
+.vendor-chart-placeholder {
+    height: 200px;
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    margin-top: 20px;
+    border-radius: 12px;
+    border: 1px dashed #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+}
+
+/* Ratings */
+.vendor-rating-container {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.vendor-rating-big {
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.vendor-stars {
+    display: flex;
+    color: #f59e0b;
+}
+
+.vendor-rating-count {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.vendor-rating-bars {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vendor-rating-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vendor-rating-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    width: 12px;
+}
+
+.vendor-rating-track {
+    flex: 1;
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.vendor-rating-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 3px;
+}
+
+/* Product Info */
+.vendor-product-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.vendor-product-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #f1f5f9;
+}
+
+.vendor-stock-alert {
+    color: #ef4444;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

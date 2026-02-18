@@ -1,0 +1,636 @@
+/* Vendor Management Module Styles */
+
+.management-module {
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Stats Panel */
+.vendor-stats-panel {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stat-v-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-v-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-v-info h3 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.stat-v-info p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Tabs & Actions */
+.vendor-module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.vendor-tabs {
+    display: flex;
+    gap: 12px;
+    background: #f1f5f9;
+    padding: 6px;
+    border-radius: 12px;
+}
+
+.vendor-tab {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vendor-tab.active {
+    background: white;
+    color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Vendor List Table */
+.v-table-container {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.v-table-controls {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.v-search {
+    position: relative;
+    width: 300px;
+}
+
+.v-search input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.v-search .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+/* Tiering Cards */
+.tier-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.tier-card {
+    padding: 32px;
+    text-align: center;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tier-card.platinum {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid #cbd5e1;
+}
+
+.tier-card.gold {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+}
+
+.tier-card.silver {
+    background: linear-gradient(135deg, #f1f5f9 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+}
+
+/* Status Badge Modifiers */
+.status-badge.success,
+.badge.success {
+    background: #dcfce7 !important;
+    color: #166534 !important;
+    border: none !important;
+    padding: 6px 14px !important;
+    font-weight: 600 !important;
+}
+
+.status-badge.danger,
+.status-badge.error,
+.badge.error {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: none !important;
+    padding: 6px 14px !important;
+    font-weight: 600 !important;
+}
+
+/* Export Buttons Premium Styling */
+.btn-export-excel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    background: #f0fdf4;
+    color: #10b981;
+    border: 1px solid #10b981;
+    cursor: pointer;
+}
+
+.btn-export-excel:hover {
+    background: #dcfce7;
+    transform: translateY(-1px);
+}
+
+.btn-export-pdf {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    background: #fff1f2;
+    color: #f43f5e;
+    border: 1px solid #f43f5e;
+    cursor: pointer;
+}
+
+.btn-export-pdf:hover {
+    background: #ffe4e6;
+    transform: translateY(-1px);
+}
+
+/* Action Buttons Refinement */
+.action-btn-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.action-btn-circle:hover {
+    background: #f8fafc;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.action-btn-circle.delete:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* KYC / Logs Container padding fix */
+.v-table-container {
+    padding-bottom: 0;
+}
+
+/* KYC Verification System */
+.kyc-container {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.kyc-verification-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+    height: calc(100vh - 250px);
+    min-height: 580px;
+}
+
+.kyc-list-card {
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.kyc-list-scroll {
+    max-height: calc(100vh - 320px);
+    overflow-y: auto;
+}
+
+.kyc-list-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 4px solid transparent;
+}
+
+.kyc-list-item:hover {
+    background-color: #f8fafc;
+}
+
+.kyc-list-item.active {
+    background-color: #f8fafc;
+    border-left-color: var(--primary-color);
+}
+
+.kyc-item-name {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.kyc-item-meta {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* KYC Details Panel */
+.kyc-details-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+}
+
+.kyc-title {
+    margin: 0;
+}
+
+.kyc-details-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+
+.kyc-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kyc-header-status {
+    text-align: right;
+}
+
+.kyc-details-title {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.kyc-header-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.kyc-details-body {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.kyc-section {
+    margin-bottom: 32px;
+}
+
+.kyc-section-header {
+    margin: 0 0 16px 0;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 8px;
+    font-size: 1rem;
+    color: #1e293b;
+}
+
+.kyc-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.kyc-info-item.span-2 {
+    grid-column: span 2;
+}
+
+.kyc-info-item label {
+    display: block;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.kyc-info-value {
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.95rem;
+}
+
+.kyc-docs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.doc-card {
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    transition: transform 0.2s;
+}
+
+.doc-card:hover {
+    transform: translateX(4px);
+    border-color: var(--primary-color);
+}
+
+.doc-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    border: 1px solid #e2e8f0;
+}
+
+.doc-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.doc-type {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #334155;
+}
+
+.doc-meta {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.doc-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.kyc-footer {
+    padding: 24px;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    gap: 12px;
+    background: #fdfdfd;
+    margin-top: 24px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.kyc-btn-approve {
+    flex: 1;
+}
+
+.kyc-btn-reject {
+    flex: 1;
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+    border: 1px solid #fecaca !important;
+}
+
+.kyc-btn-reject:hover {
+    background: #fee2e2 !important;
+}
+
+.kyc-status-banner {
+    padding: 24px;
+    border-top: 1px solid #f1f5f9;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #fdfdfd;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.icon-btn-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn-sm:hover {
+    background: #f1f5f9;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.rejection-notice {
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #991b1b;
+    display: flex;
+    gap: 12px;
+}
+
+.rejection-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.rejection-text {
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+.kyc-empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    text-align: center;
+    padding: 48px;
+}
+
+.kyc-empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+/* Form Styles */
+/* Vendor Registration Form Fixes */
+.vendor-form-huge-standard {
+    width: 100% !important;
+    max-width: 600px !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: white !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.vendor-step-content {
+    padding: 32px 48px !important;
+    width: 100% !important;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.v-table-controls .input-with-icon .field-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.v-table-controls .input-with-icon select {
+    width: 100%;
+    padding: 10px 16px 10px 38px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s;
+    appearance: none;
+}
+
+.v-table-controls .input-with-icon select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.v-input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.v-input-group input,
+.v-input-group select,
+.v-input-group textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: #f8fafc;
+}
+
+@media (max-width: 1200px) {
+    .vendor-stats-panel {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tier-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .vendor-stats-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .vendor-module-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+}
