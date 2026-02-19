@@ -1,12 +1,12 @@
 import React from 'react';
-import { Package, TrendingUp, AlertTriangle, XCircle } from 'lucide-react';
+import { Package, Power, Clock, XCircle, CheckCircle2 } from 'lucide-react';
 
 const VendorProductStats = ({ stats }) => {
 
     const data = stats || {
         total: 0,
-        inStock: 0,
-        lowStock: 0,
+        live: 0,
+        pending: 0,
         outOfStock: 0
     };
 
@@ -19,39 +19,39 @@ const VendorProductStats = ({ stats }) => {
                     className="stat-p-icon"
                     style={{ background: '#e0e7ff', color: '#4f46e5' }}
                 >
-                    <Package size={24} />
+                    <Package size={26} />
                 </div>
                 <div className="stat-p-info">
                     <h3>{data.total}</h3>
-                    <p>Total Products</p>
+                    <p>Total Catalog</p>
                 </div>
             </div>
 
-            {/* In Stock */}
+            {/* Live Products */}
             <div className="stat-p-card">
                 <div
                     className="stat-p-icon"
-                    style={{ background: '#d1fae5', color: '#059669' }}
+                    style={{ background: '#dcfce7', color: '#15803d' }}
                 >
-                    <TrendingUp size={24} />
+                    <Power size={26} />
                 </div>
                 <div className="stat-p-info">
-                    <h3>{data.inStock}</h3>
-                    <p>In Stock</p>
+                    <h3>{data.live}</h3>
+                    <p>Live Products</p>
                 </div>
             </div>
 
-            {/* Low Stock */}
+            {/* Approval Pending */}
             <div className="stat-p-card">
                 <div
                     className="stat-p-icon"
-                    style={{ background: '#fef3c7', color: '#d97706' }}
+                    style={{ background: '#fffbeb', color: '#b45309' }}
                 >
-                    <AlertTriangle size={24} />
+                    <Clock size={26} />
                 </div>
                 <div className="stat-p-info">
-                    <h3>{data.lowStock}</h3>
-                    <p>Low Stock (&lt; 10)</p>
+                    <h3>{data.pending}</h3>
+                    <p>Awaiting Approval</p>
                 </div>
             </div>
 
@@ -59,16 +59,15 @@ const VendorProductStats = ({ stats }) => {
             <div className="stat-p-card">
                 <div
                     className="stat-p-icon"
-                    style={{ background: '#fee2e2', color: '#dc2626' }}
+                    style={{ background: '#fef2f2', color: '#b91c1c' }}
                 >
-                    <XCircle size={24} />
+                    <XCircle size={26} />
                 </div>
                 <div className="stat-p-info">
                     <h3>{data.outOfStock}</h3>
                     <p>Out Of Stock</p>
                 </div>
             </div>
-
         </div>
     );
 };

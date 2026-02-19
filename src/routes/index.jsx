@@ -14,6 +14,7 @@ import RidersPage from '../modules/riders/RidersPage';
 import VehicleTypesPage from '../modules/vehicles/VehicleTypesPage';
 import { SubCategoriesPage } from '../modules/subcategories';
 import BrandsPage from '../modules/brands/BrandsPage';
+import QuantityPage from '../modules/quantity';
 
 
 //vendor routes
@@ -137,6 +138,15 @@ const GlobalRoutes = () => {
                 element={
                     <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN"]}>
                         <VehicleTypesPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/quantity"
+                element={
+                    <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN"]}>
+                        <QuantityPage />
                     </ProtectedRoute>
                 }
             />

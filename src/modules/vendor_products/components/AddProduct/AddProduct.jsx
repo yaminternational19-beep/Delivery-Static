@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import ProductForm from './ProductForm';
+import ProductForm from '../ProductForm';
 import BulkUploadForm from './BulkUploadForm';
 import { ChevronLeft } from 'lucide-react';
 import Toast from '../../../../components/common/Toast/Toast';
 import './AddProduct.css';
 
-const AddProduct = ({ onSave, categories = {}, brands = [], onBack }) => {
-    const [mode, setMode] = useState('single');
+const AddProduct = ({ onSave, categories = {}, brands = [], onBack, initialData = null }) => {
+    const [mode, setMode] = useState(initialData ? 'single' : 'single'); // Default to single if editing
     const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
     const showToast = (message, type = 'success') => {
@@ -16,7 +16,7 @@ const AddProduct = ({ onSave, categories = {}, brands = [], onBack }) => {
 
     const handleSingleSave = (product) => {
         onSave([product]);
-        showToast('Product draft saved!');
+        showToast(initialData ? 'Product updated successfully!' : 'Product draft saved!');
     };
 
     const handleBulkSave = (products) => {
@@ -37,23 +37,25 @@ const AddProduct = ({ onSave, categories = {}, brands = [], onBack }) => {
 
             <header className="add-product-header">
                 <div className="header-text">
-                    <h1>Add New Products</h1>
-                    <p>Manage single entries or bulk inventory imports effortlessly.</p>
+                    <h1>{initialData ? 'Edit Product' : 'Add New Products'}</h1>
+                    <p>{initialData ? `Updating ${initialData.name}` : 'Manage single entries or bulk inventory imports effortlessly.'}</p>
                 </div>
-                <div className="mode-tabs">
-                    <button
-                        className={`mode-tab ${mode === 'single' ? 'active' : ''}`}
-                        onClick={() => setMode('single')}
-                    >
-                        Single Product
-                    </button>
-                    <button
-                        className={`mode-tab ${mode === 'bulk' ? 'active' : ''}`}
-                        onClick={() => setMode('bulk')}
-                    >
-                        Bulk Upload
-                    </button>
-                </div>
+                {!initialData && (
+                    <div className="mode-tabs">
+                        <button
+                            className={`mode-tab ${mode === 'single' ? 'active' : ''}`}
+                            onClick={() => setMode('single')}
+                        >
+                            Single Product
+                        </button>
+                        <button
+                            className={`mode-tab ${mode === 'bulk' ? 'active' : ''}`}
+                            onClick={() => setMode('bulk')}
+                        >
+                            Bulk Upload
+                        </button>
+                    </div>
+                )}
             </header>
 
             <main className="add-product-main">
@@ -63,6 +65,7 @@ const AddProduct = ({ onSave, categories = {}, brands = [], onBack }) => {
                         showToast={showToast}
                         categories={categories}
                         brands={brands}
+                        initialData={initialData}
                     />
                 ) : (
                     <BulkUploadForm

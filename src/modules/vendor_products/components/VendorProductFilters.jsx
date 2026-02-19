@@ -55,9 +55,9 @@ const VendorProductFilters = ({ filters, setFilters, onClear }) => {
                 >
                     <option value="">All Brands</option>
                     <option value="Sony">Sony</option>
-                    <option value="Organic India">Organic India</option>
-                    <option value="Noise">Noise</option>
                     <option value="Samsung">Samsung</option>
+                    <option value="Nike">Nike</option>
+                    <option value="Amul">Amul</option>
                 </select>
 
                 {/* Stock Filter */}
@@ -67,11 +67,12 @@ const VendorProductFilters = ({ filters, setFilters, onClear }) => {
                     onChange={(e) => handleChange('stock', e.target.value)}
                 >
                     <option value="">All Stock</option>
-                    <option value="high">High Stock</option>
-                    <option value="low">Low Stock (&lt; 10)</option>
-                    <option value="out">Out Of Stock</option>
+                    <option value="high">In Stock</option>
+                    <option value="low">Low Stock</option>
+                    <option value="out">Out of Stock</option>
                 </select>
 
+                {/* Status Filter */}
                 <select
                     className="filter-select"
                     value={filters.status || ''}
@@ -81,20 +82,14 @@ const VendorProductFilters = ({ filters, setFilters, onClear }) => {
                     <option value="approved">Approved</option>
                     <option value="pending">Pending</option>
                     <option value="rejected">Rejected</option>
-                    <option value="Groceries">Groceries</option>
                 </select>
 
                 {/* Clear Button */}
                 {Object.values(filters).some(Boolean) && (
                     <button
                         onClick={onClear}
-                        className="icon-btn"
+                        className="filter-clear-btn"
                         title="Clear Filters"
-                        style={{
-                            color: '#ef4444',
-                            border: '1px solid #fee2e2',
-                            background: '#fef2f2'
-                        }}
                     >
                         <X size={18} />
                     </button>

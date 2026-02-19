@@ -23,6 +23,7 @@ import {
     Award,
     Bike,
     Car,
+    Scale,
     Navigation
 } from 'lucide-react';
 import { rolePermissions } from '../../utils/rolePermissions';
@@ -45,12 +46,18 @@ const Sidebar = () => {
 
         { name: "Sub-Admins", key: "SUB_ADMINS", icon: Users, path: "/subadmin", group: "MANAGEMENT" },
         { name: "Vendors", key: "VENDORS", icon: Truck, path: "/vendors", group: "MANAGEMENT" },
+
         { name: "Categories", key: "CATEGORIES", icon: Layers, path: "/categories", group: "MANAGEMENT" },
         { name: "Sub-Categories", key: "SUBCATEGORIES", icon: ListTree, path: "/sub-categories", group: "MANAGEMENT" },
         { name: "Brands", key: "BRANDS", icon: Award, path: "/brands", group: "MANAGEMENT" },
+
         { name: "Products", key: "PRODUCTS", icon: Package, path: "/products", group: "MANAGEMENT" },
+        { name: "Products", key: "VENDOR_PRODUCTS", icon: Package, path: "/vendor-products", group: "MANAGEMENT" },
         { name: "Orders", key: "ORDERS", icon: ShoppingBag, path: "/orders", group: "MANAGEMENT" },
+        {name:"Orders", key:"VENDOR_ORDERS", icon:ShoppingBag, path:"/vendor-orders", group:"MANAGEMENT"},
+
         { name: "Vehicle Types", key: "VEHICLES", icon: Car, path: "/vehicles", group: "MANAGEMENT" },
+        { name: "Quantity", key: "QUANTITY", icon: Scale, path: "/quantity", group: "MANAGEMENT" },
         { name: "Riders", key: "RIDERS", icon: Bike, path: "/riders", group: "MANAGEMENT" },
         { name: "Customers", key: "CUSTOMERS", icon: Users, path: "/customers", group: "MANAGEMENT" },
 
@@ -65,7 +72,6 @@ const Sidebar = () => {
 
 
 
-        { name: "Products", key: "VENDOR_PRODUCTS", icon: Package, path: "/vendor-products", group: "MANAGEMENT" }
     ];
 
     const filteredMenu = permissions.includes("ALL")
