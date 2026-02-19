@@ -19,7 +19,16 @@ const CategoryForm = ({ initialData, onCancel, onSave }) => {
         e.preventDefault();
         onSave(formData);
     };
-
+const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData({ ...formData, icon: reader.result });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
     return (
         <div className="modal-overlay">
             <div className="card" style={{ width: '500px', padding: '24px' }}>
@@ -52,7 +61,7 @@ const CategoryForm = ({ initialData, onCancel, onSave }) => {
                         />
                     </div>
 
-                    <div className="form-group">
+                    {/* <div className="form-group">
                         <label>Category Icon / Image</label>
                         <div style={{
                             border: '2px dashed var(--border-color)',
@@ -73,6 +82,38 @@ const CategoryForm = ({ initialData, onCancel, onSave }) => {
                                 boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                             }}>
                                 <Upload size={20} color="var(--primary-color)" />
+                            </div>
+                            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Click to upload image</span>
+                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>SVG, PNG, JPG (max 2MB)</span>
+                        </div>
+                    </div> */}
+                    <div className="form-group">
+                        <label>Category Icon / Image</label>
+                        <div style={{
+                            border: '2px dashed var(--border-color)',
+                            borderRadius: '8px',
+                            padding: '24px',
+                            textAlign: 'center',
+                            background: '#f8fafc',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }}>
+                            <div style={{
+                                width: '48px', height: '48px', borderRadius: '50%',
+                                background: 'white', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center',
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                            }}>
+                               <Upload size={20} color="var(--primary-color)" />
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    style={{ display: 'none' }}
+                                />
                             </div>
                             <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Click to upload image</span>
                             <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>SVG, PNG, JPG (max 2MB)</span>
