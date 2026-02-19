@@ -17,7 +17,7 @@ import BrandsPage from '../modules/brands/BrandsPage';
 
 
 //vendor routes
-import VendorProductPage from '../modules/products/VendorProductsPage';
+import VendorProductPage from '../modules/vendor_products/VendorProductsPage';
 
 // Simple ProtectedRoute component
 const ProtectedRoute = ({ children, allowedRoles = ["ALL"] }) => {

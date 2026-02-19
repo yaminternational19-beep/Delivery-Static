@@ -28,7 +28,6 @@ export const validateProduct = (product) => {
     if (!product.category) errors.category = 'Category is required';
     if (!product.price || product.price <= 0) errors.price = 'Price must be greater than 0';
     if (!product.stock && product.stock !== 0) errors.stock = 'Stock is required';
-    if (!product.sku) errors.sku = 'SKU is required';
     if (!product.specification) errors.specification = 'Specification is required';
     if (!product.description) errors.description = 'Description is required';
 

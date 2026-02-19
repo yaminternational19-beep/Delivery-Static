@@ -4,6 +4,7 @@ import VendorProductFilters from './components/VendorProductFilters';
 import VendorProductList from './components/VendorProductList';
 import AddProduct from './components/AddProduct/AddProduct';
 import { FileText, Download, ArrowLeft } from 'lucide-react';
+import './VendorProducts.css';
 
 const VendorProductsPage = () => {
 
@@ -231,12 +232,20 @@ const VendorProductsPage = () => {
                         >
                             <ArrowLeft size={18} /> Back
                         </button>
-                        
+
                     </div>
 
                     {/* Add Product Component */}
                     <AddProduct
-                        onProductAdded={() => {
+                        categories={{
+                            'Electronics': ['Mobile', 'Laptop', 'Accessories'],
+                            'Fashion': ['Men', 'Women', 'Kids'],
+                            'Groceries': ['Fruits', 'Vegetables', 'Dairy']
+                        }}
+                        brands={['Sony', 'Samsung', 'Nike', 'Adidas', 'Apple']}
+                        onBack={() => setShowAddPage(false)}
+                        onSave={(products) => {
+                            console.log('Products to save:', products);
                             setShowAddPage(false);
                         }}
                     />

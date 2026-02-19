@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import ProductForm from './ProductForm';
 import BulkUploadForm from './BulkUploadForm';
-import { Toast } from '../../../../components/Toast/Toast';
 import { ChevronLeft } from 'lucide-react';
+import Toast from '../../../../components/common/Toast/Toast';
 import './AddProduct.css';
 
-const AddProduct = ({ onSave, categories, brands, onBack }) => {
+const AddProduct = ({ onSave, categories = {}, brands = [], onBack }) => {
     const [mode, setMode] = useState('single');
     const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
@@ -34,11 +34,6 @@ const AddProduct = ({ onSave, categories, brands, onBack }) => {
                 />
             )}
 
-            <div className="back-btn-bar">
-                <button onClick={onBack} className="btn-back-styled">
-                    <ChevronLeft size={16} /> Back
-                </button>
-            </div>
 
             <header className="add-product-header">
                 <div className="header-text">
