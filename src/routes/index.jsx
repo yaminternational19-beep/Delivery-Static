@@ -19,6 +19,7 @@ import QuantityPage from '../modules/quantity';
 
 //vendor routes
 import VendorProductPage from '../modules/vendor_products/VendorProductsPage';
+import VendorOrdersPage from '../modules/vendor_orders/VendorOrdersPage';
 
 // Simple ProtectedRoute component
 const ProtectedRoute = ({ children, allowedRoles = ["ALL"] }) => {
@@ -165,6 +166,15 @@ const GlobalRoutes = () => {
                 element={
                     <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN", "SUB_ADMIN", "VENDOR_OWNER"]}>
                         <VendorProductPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/vendor-orders"
+                element={
+                    <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN", "SUB_ADMIN", "VENDOR_OWNER"]}>
+                        <VendorOrdersPage />
                     </ProtectedRoute>
                 }
             />

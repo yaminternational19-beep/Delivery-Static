@@ -1,25 +1,26 @@
 export const rolePermissions = {
     SUPER_ADMIN: [
-  "DASHBOARD",
-  "ORDERS",
-  "VENDORS",
-  "SUB_ADMINS",
-  "CATEGORIES",
-  "SUBCATEGORIES",
-  "BRANDS",
-  "PRODUCTS",
-  "RIDERS",
-  "CUSTOMERS",
-  "VEHICLES",
-  "QUANTITY",
-  "ZONES",
-  "TICKETS",
-  "REFUNDS",
-  "PAYOUTS",
-  "INVOICES",
-  "SETTINGS"
-],
- 
+        "DASHBOARD",
+        "ORDERS",
+        "VENDORS",
+        "SUB_ADMINS",
+        "CATEGORIES",
+        "SUBCATEGORIES",
+        "BRANDS",
+        "PRODUCTS",
+        "RIDERS",
+        "CUSTOMERS",
+        "VEHICLES",
+        "QUANTITY",
+        "ZONES",
+        "TICKETS",
+        "REFUNDS",
+        "PAYOUTS",
+        "INVOICES",
+        "SETTINGS"
+    ],
+    
+
 
     ADMIN: [
         "DASHBOARD",
@@ -34,7 +35,9 @@ export const rolePermissions = {
         "CUSTOMERS",
         "VEHICLES",
         "QUANTITY",
-        "ZONES"
+        "ZONES",
+        "VENDOR_ORDERS",
+        "VENDOR_PRODUCTS"
     ],
 
     SUB_ADMIN: [
@@ -67,7 +70,6 @@ export const rolePermissions = {
         "REPORTS",
         "STAFF",
         "TICKETS",
-
     ],
 
     VENDOR_MANAGER: [
