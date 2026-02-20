@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
-    Search, Filter, Edit2, Trash2,
-    ToggleLeft, ToggleRight, FileText,
-    Download, CheckSquare, Square
+    Search, Filter, ChevronLeft, ChevronRight,
+    CheckSquare, Square
 } from 'lucide-react';
+import ActionButtons from '../../../components/common/ActionButtons';
+import ExportActions from '../../../components/common/ExportActions';
 
 const CategoryList = ({ onEdit, onDelete, showToast }) => {
     const [selectedRows, setSelectedRows] = useState([]);
@@ -29,20 +30,20 @@ const CategoryList = ({ onEdit, onDelete, showToast }) => {
     };
 
     const toggleSelectRow = (id) => {
-        if (selectedRows.includes(id)) {
-            setSelectedRows(selectedRows.filter(rowId => rowId !== id));
-        } else {
-            setSelectedRows([...selectedRows, id]);
-        }
+        setSelectedRows(prev =>
+            prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
+        );
     };
 
-    const handleExport = (type) => {
-        showToast(`Exporting ${selectedRows.length || 'all'} categories as ${type}...`, 'info');
+    const handleToggleStatus = (category) => {
+        const next = category.status === 'Active' ? 'Deactivated' : 'Activated';
+        showToast(`${next} "${category.name}"`, 'success');
     };
 
     const filteredCategories = categories.filter(c => {
         const matchesStatus = statusFilter === 'All' || c.status === statusFilter;
-        const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        const matchesSearch =
+            c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             c.description.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesStatus && matchesSearch;
     });
@@ -55,23 +56,28 @@ const CategoryList = ({ onEdit, onDelete, showToast }) => {
 
     return (
         <div className="c-table-container">
+
+            {/* ── Controls Bar ── */}
             <div className="c-table-controls">
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+
+                    {/* Search */}
                     <div className="c-search">
-                        <Search className="search-icon" size={18} />
+                        <Search className="search-icon" size={16} />
                         <input
                             type="text"
                             placeholder="Search categories..."
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                         />
                     </div>
-                    <div className="input-with-icon" style={{ width: '150px' }}>
-                        <Filter size={16} className="field-icon" />
+
+                    {/* Status Filter */}
+                    <div className="input-with-icon" style={{ width: '160px' }}>
+                        <Filter size={15} className="field-icon" />
                         <select
-                            style={{ paddingLeft: '36px', height: '42px' }}
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                         >
                             <option value="All">All Status</option>
                             <option value="Active">Active</option>
@@ -80,47 +86,36 @@ const CategoryList = ({ onEdit, onDelete, showToast }) => {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <button className="action-btn secondary" onClick={() => handleExport('PDF')}>
-                        <FileText size={18} /> Export PDF
-                    </button>
-                    <button className="action-btn secondary" onClick={() => handleExport('Excel')}>
-                        <Download size={18} /> Export Excel
-                    </button>
-                </div>
+                {/* Export — shared component */}
+                <ExportActions
+                    selectedCount={selectedRows.length}
+                    onExport={showToast}
+                />
             </div>
 
+            {/* ── Bulk Selection Bar ── */}
             {selectedRows.length > 0 && (
-                <div style={{
-                    padding: '12px 20px',
-                    background: 'rgba(99, 102, 241, 0.05)',
-                    borderBottom: '1px solid var(--border-color)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
-                    <span style={{ fontSize: '0.9rem', color: 'var(--primary-color)', fontWeight: 600 }}>
-                        {selectedRows.length} categories selected
+                <div className="c-bulk-bar">
+                    <span>
+                        {selectedRows.length} {selectedRows.length === 1 ? 'category' : 'categories'} selected
                     </span>
-                    <button
-                        style={{ background: 'none', color: '#ef4444', fontSize: '0.85rem', fontWeight: 600 }}
-                        onClick={() => setSelectedRows([])}
-                    >
-                        Clear Selection
-                    </button>
+                    <button onClick={() => setSelectedRows([])}>Clear Selection</button>
                 </div>
             )}
 
+            {/* ── Table ── */}
             <table className="dashboard-table">
                 <thead>
                     <tr>
-                        <th style={{ width: '50px' }}>
-                            <div onClick={toggleSelectAll} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                {selectedRows.length === paginatedCategories.length && paginatedCategories.length > 0 ? (
-                                    <CheckSquare size={18} color="var(--primary-color)" />
-                                ) : (
-                                    <Square size={18} color="#94a3b8" />
-                                )}
+                        <th style={{ width: '48px' }}>
+                            <div
+                                onClick={toggleSelectAll}
+                                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                            >
+                                {selectedRows.length === paginatedCategories.length && paginatedCategories.length > 0
+                                    ? <CheckSquare size={17} color="var(--primary-color)" />
+                                    : <Square size={17} color="#94a3b8" />
+                                }
                             </div>
                         </th>
                         <th style={{ width: '60px' }}>Icon</th>
@@ -128,102 +123,103 @@ const CategoryList = ({ onEdit, onDelete, showToast }) => {
                         <th>Category Name</th>
                         <th>Description</th>
                         <th>Status</th>
-                        <th style={{ textAlign: 'right' }}>Actions</th>
+                        <th style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedCategories.map((category) => (
-                        <tr key={category.id} className={selectedRows.includes(category.id) ? 'selected-row' : ''}>
-                            <td>
-                                <div onClick={() => toggleSelectRow(category.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                    {selectedRows.includes(category.id) ? (
-                                        <CheckSquare size={18} color="var(--primary-color)" />
-                                    ) : (
-                                        <Square size={18} color="#94a3b8" />
-                                    )}
-                                </div>
-                            </td>
-                            <td>
-                                <div style={{
-                                    width: '40px', height: '40px', borderRadius: '8px',
-                                    background: '#f8fafc', display: 'flex',
-                                    alignItems: 'center', justifyContent: 'center',
-                                    fontSize: '1.2rem', border: '1px solid var(--border-color)'
-                                }}>
-                                    {category.icon}
-                                </div>
-                            </td>
-                            <td>
-                                <span style={{
-                                    fontSize: '0.85rem',
-                                    color: '#64748b',
-                                    fontWeight: 500,
-                                    padding: '4px 8px',
-                                    background: '#f1f5f9',
-                                    borderRadius: '4px'
-                                }}>
-                                    {category.id}
-                                </span>
-                            </td>
-                            <td>
-                                <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{category.name}</div>
-                            </td>
-                            <td style={{ maxWidth: '250px', color: '#64748b' }}>{category.description}</td>
-                            <td>
-                                <span className={`badge ${category.status === 'Active' ? 'success' : 'error'}`}>
-                                    {category.status}
-                                </span>
-                            </td>
-                            <td>
-                                <div className="action-btns" style={{ justifyContent: 'flex-end' }}>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={() => onEdit?.(category)}
-                                        title="Edit Category"
-                                    >
-                                        <Edit2 size={18} />
-                                    </button>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={() => showToast(`${category.status === 'Active' ? 'Deactivated' : 'Activated'} ${category.name}`, 'success')}
-                                        title={category.status === 'Active' ? 'Deactivate' : 'Activate'}
-                                        style={{ color: category.status === 'Active' ? '#f59e0b' : '#10b981' }}
-                                    >
-                                        {category.status === 'Active' ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
-                                    </button>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={() => onDelete?.(category)}
-                                        title="Delete"
-                                        style={{ color: '#ef4444' }}
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
+                    {paginatedCategories.length === 0 ? (
+                        <tr>
+                            <td colSpan={7} style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
+                                No categories found.
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        paginatedCategories.map((category) => (
+                            <tr
+                                key={category.id}
+                                className={selectedRows.includes(category.id) ? 'selected-row' : ''}
+                            >
+                                {/* Checkbox */}
+                                <td>
+                                    <div
+                                        onClick={() => toggleSelectRow(category.id)}
+                                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        {selectedRows.includes(category.id)
+                                            ? <CheckSquare size={17} color="var(--primary-color)" />
+                                            : <Square size={17} color="#94a3b8" />
+                                        }
+                                    </div>
+                                </td>
+
+                                {/* Icon */}
+                                <td>
+                                    <div className="category-icon-box">{category.icon}</div>
+                                </td>
+
+                                {/* Category ID */}
+                                <td>
+                                    <span className="cat-id-badge">{category.id}</span>
+                                </td>
+
+                                {/* Name */}
+                                <td>
+                                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                                        {category.name}
+                                    </span>
+                                </td>
+
+                                {/* Description */}
+                                <td style={{ maxWidth: '240px', color: '#64748b', fontSize: '0.88rem' }}>
+                                    {category.description}
+                                </td>
+
+                                {/* Status */}
+                                <td>
+                                    <span className={`badge ${category.status === 'Active' ? 'success' : 'error'}`}>
+                                        {category.status}
+                                    </span>
+                                </td>
+
+                                {/* Actions — shared ActionButtons component */}
+                                <td>
+                                    <ActionButtons
+                                        onEdit={() => onEdit?.(category)}
+                                        onToggleStatus={() => handleToggleStatus(category)}
+                                        onDelete={() => onDelete?.(category)}
+                                        isActive={category.status === 'Active'}
+                                    />
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
 
-            <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                    Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredCategories.length)} - {Math.min(currentPage * itemsPerPage, filteredCategories.length)} of {filteredCategories.length} categories
+            {/* ── Pagination ── */}
+            <div className="c-pagination">
+                <span className="c-pagination-info">
+                    Showing{' '}
+                    {filteredCategories.length === 0
+                        ? 0
+                        : (currentPage - 1) * itemsPerPage + 1}–
+                    {Math.min(currentPage * itemsPerPage, filteredCategories.length)}{' '}
+                    of {filteredCategories.length} categories
                 </span>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="c-pagination-btns">
                     <button
-                        className="mini-btn secondary"
+                        className="c-page-btn"
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(p => p - 1)}
                     >
-                        Previous
+                        <ChevronLeft size={14} /> Prev
                     </button>
                     <button
-                        className="mini-btn secondary"
-                        disabled={currentPage === totalPages}
+                        className="c-page-btn"
+                        disabled={currentPage === totalPages || totalPages === 0}
                         onClick={() => setCurrentPage(p => p + 1)}
                     >
-                        Next
+                        Next <ChevronRight size={14} />
                     </button>
                 </div>
             </div>
@@ -233,4 +229,3 @@ const CategoryList = ({ onEdit, onDelete, showToast }) => {
 };
 
 export default CategoryList;
-

@@ -44,7 +44,7 @@ const SubCategoriesPage = () => {
                     </p>
                 </div>
                 <button
-                    className="action-btn primary"
+                    className="btn btn-primary"
                     onClick={() => { setEditingItem(null); setShowForm(true); }}
                 >
                     <Plus size={18} /> Add New Sub Category

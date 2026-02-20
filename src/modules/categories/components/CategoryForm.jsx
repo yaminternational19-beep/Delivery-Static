@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Upload, Image as ImageIcon } from 'lucide-react';
 
 const CategoryForm = ({ initialData, onCancel, onSave }) => {
@@ -8,10 +8,15 @@ const CategoryForm = ({ initialData, onCancel, onSave }) => {
         icon: '',
         status: 'Active'
     });
+    const [imagePreview, setImagePreview] = useState(null);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (initialData) {
             setFormData(initialData);
+            if (initialData.icon && initialData.icon.startsWith('data:')) {
+                setImagePreview(initialData.icon);
+            }
         }
     }, [initialData]);
 
@@ -19,136 +24,122 @@ const CategoryForm = ({ initialData, onCancel, onSave }) => {
         e.preventDefault();
         onSave(formData);
     };
-const handleImageUpload = (e) => {
+
+    const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormData({ ...formData, icon: reader.result });
+                setFormData(prev => ({ ...prev, icon: reader.result }));
+                setImagePreview(reader.result);
             };
             reader.readAsDataURL(file);
         }
     };
+
     return (
-        <div className="modal-overlay">
-            <div className="card" style={{ width: '500px', padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                    <h3 style={{ margin: 0 }}>{initialData ? 'Edit Category' : 'Add New Category'}</h3>
-                    <button className="icon-btn" onClick={onCancel}><X size={20} /></button>
+        <div className="cat-modal-overlay">
+            <div className="cat-modal-card">
+                {/* Header */}
+                <div className="cat-modal-header">
+                    <h3>{initialData ? 'Edit Category' : 'Add New Category'}</h3>
+                    <button className="icon-btn-sm" onClick={onCancel}>
+                        <X size={20} />
+                    </button>
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div className="form-group">
-                        <label>Category Name</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            placeholder="e.g. Spices & Herbs"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                        />
-                    </div>
+                {/* Body */}
+                <form onSubmit={handleSubmit}>
+                    <div className="cat-modal-body">
 
-                    <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                            className="input-field"
-                            rows="3"
-                            placeholder="Short description of the category..."
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        />
-                    </div>
-
-                    {/* <div className="form-group">
-                        <label>Category Icon / Image</label>
-                        <div style={{
-                            border: '2px dashed var(--border-color)',
-                            borderRadius: '8px',
-                            padding: '24px',
-                            textAlign: 'center',
-                            background: '#f8fafc',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '8px'
-                        }}>
-                            <div style={{
-                                width: '48px', height: '48px', borderRadius: '50%',
-                                background: 'white', display: 'flex',
-                                alignItems: 'center', justifyContent: 'center',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                            }}>
-                                <Upload size={20} color="var(--primary-color)" />
-                            </div>
-                            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Click to upload image</span>
-                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>SVG, PNG, JPG (max 2MB)</span>
+                        {/* Category Name */}
+                        <div className="cat-form-group">
+                            <label>Category Name</label>
+                            <input
+                                type="text"
+                                className="cat-input"
+                                placeholder="e.g. Spices & Herbs"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
+                            />
                         </div>
-                    </div> */}
-                    <div className="form-group">
-                        <label>Category Icon / Image</label>
-                        <div style={{
-                            border: '2px dashed var(--border-color)',
-                            borderRadius: '8px',
-                            padding: '24px',
-                            textAlign: 'center',
-                            background: '#f8fafc',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '8px'
-                        }}>
-                            <div style={{
-                                width: '48px', height: '48px', borderRadius: '50%',
-                                background: 'white', display: 'flex',
-                                alignItems: 'center', justifyContent: 'center',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                            }}>
-                               <Upload size={20} color="var(--primary-color)" />
+
+                        {/* Description */}
+                        <div className="cat-form-group">
+                            <label>Description</label>
+                            <textarea
+                                className="cat-input"
+                                rows="3"
+                                placeholder="Short description of the category..."
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                            />
+                        </div>
+
+                        {/* Category Icon / Image Upload */}
+                        <div className="cat-form-group">
+                            <label>Category Icon / Image</label>
+                            <div className="cat-upload-zone">
+                                {/* Native file input covers the whole zone */}
                                 <input
+                                    ref={fileInputRef}
                                     type="file"
                                     accept="image/*"
                                     onChange={handleImageUpload}
-                                    style={{ display: 'none' }}
                                 />
+                                {imagePreview ? (
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        className="cat-upload-preview"
+                                    />
+                                ) : (
+                                    <div className="cat-upload-icon-wrapper">
+                                        <Upload size={22} color="var(--primary-color)" />
+                                    </div>
+                                )}
+                                <span className="cat-upload-text">
+                                    {imagePreview ? 'Click to change image' : 'Click to upload image'}
+                                </span>
+                                <span className="cat-upload-hint">SVG, PNG, JPG (max 2MB)</span>
                             </div>
-                            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Click to upload image</span>
-                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>SVG, PNG, JPG (max 2MB)</span>
+                        </div>
+
+                        {/* Status */}
+                        <div className="cat-form-group">
+                            <label>Status</label>
+                            <div className="cat-status-group">
+                                <label className="cat-status-option">
+                                    <input
+                                        type="radio"
+                                        name="catStatus"
+                                        value="Active"
+                                        checked={formData.status === 'Active'}
+                                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                    />
+                                    Active
+                                </label>
+                                <label className="cat-status-option">
+                                    <input
+                                        type="radio"
+                                        name="catStatus"
+                                        value="Inactive"
+                                        checked={formData.status === 'Inactive'}
+                                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                    />
+                                    Inactive
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="form-group">
-                        <label>Status</label>
-                        <div style={{ display: 'flex', gap: '16px' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="Active"
-                                    checked={formData.status === 'Active'}
-                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                />
-                                Active
-                            </label>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="Inactive"
-                                    checked={formData.status === 'Inactive'}
-                                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                />
-                                Inactive
-                            </label>
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                        <button type="button" className="action-btn secondary" onClick={onCancel} style={{ flex: 1 }}>Cancel</button>
-                        <button type="submit" className="action-btn primary" style={{ flex: 1 }}>
+                    {/* Footer */}
+                    <div className="cat-modal-footer">
+                        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+                            Cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary">
                             {initialData ? 'Save Changes' : 'Create Category'}
                         </button>
                     </div>

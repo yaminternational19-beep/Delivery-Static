@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
-    Search, Filter, Edit2, Trash2,
-    ToggleLeft, ToggleRight, ListTree,
-    FileText, Download, CheckSquare, Square, Layers
+    Search, Filter, ListTree,
+    CheckSquare, Square, ChevronLeft, ChevronRight, Layers
 } from 'lucide-react';
+import ActionButtons from '../../../components/common/ActionButtons';
+import ExportActions from '../../../components/common/ExportActions';
 
 const SubCategoryList = ({ onEdit, onDelete, showToast }) => {
     const [selectedRows, setSelectedRows] = useState([]);
@@ -28,9 +29,8 @@ const SubCategoryList = ({ onEdit, onDelete, showToast }) => {
         { id: 'CAT004', name: 'Fruits' }
     ];
 
-    const getCountByCategory = (catId) => {
-        return subcategories.filter(sc => sc.catId === catId).length;
-    };
+    const getCountByCategory = (catId) =>
+        subcategories.filter(sc => sc.catId === catId).length;
 
     const toggleSelectAll = () => {
         if (selectedRows.length === paginatedData.length) {
@@ -41,21 +41,21 @@ const SubCategoryList = ({ onEdit, onDelete, showToast }) => {
     };
 
     const toggleSelectRow = (id) => {
-        if (selectedRows.includes(id)) {
-            setSelectedRows(selectedRows.filter(rowId => rowId !== id));
-        } else {
-            setSelectedRows([...selectedRows, id]);
-        }
+        setSelectedRows(prev =>
+            prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
+        );
     };
 
-    const handleExport = (type) => {
-        showToast(`Exporting ${selectedRows.length || 'all'} items as ${type}...`, 'info');
+    const handleToggleStatus = (item) => {
+        const next = item.status === 'Active' ? 'Deactivated' : 'Activated';
+        showToast(`${next} "${item.name}"`, 'success');
     };
 
     const filteredData = subcategories.filter(sc => {
         const matchesStatus = statusFilter === 'All' || sc.status === statusFilter;
         const matchesCategory = categoryFilter === 'All' || sc.catId === categoryFilter;
-        const matchesSearch = sc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        const matchesSearch =
+            sc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             sc.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
             sc.id.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesStatus && matchesCategory && matchesSearch;
@@ -69,24 +69,28 @@ const SubCategoryList = ({ onEdit, onDelete, showToast }) => {
 
     return (
         <div className="sc-table-container">
+
+            {/* ── Controls Bar ── */}
             <div className="sc-table-controls">
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+
+                    {/* Search */}
                     <div className="sc-search">
-                        <Search className="search-icon" size={18} />
+                        <Search className="search-icon" size={16} />
                         <input
                             type="text"
                             placeholder="Search by name or ID..."
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                         />
                     </div>
 
-                    <div className="input-with-icon" style={{ width: '180px' }}>
-                        <Layers size={16} className="field-icon" />
+                    {/* Category Filter */}
+                    <div className="input-with-icon" style={{ width: '190px' }}>
+                        <Layers size={15} className="field-icon" />
                         <select
-                            style={{ paddingLeft: '36px', height: '42px' }}
                             value={categoryFilter}
-                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            onChange={(e) => { setCategoryFilter(e.target.value); setCurrentPage(1); }}
                         >
                             <option value="All">All Categories</option>
                             {categories.map(cat => (
@@ -97,12 +101,12 @@ const SubCategoryList = ({ onEdit, onDelete, showToast }) => {
                         </select>
                     </div>
 
-                    <div className="input-with-icon" style={{ width: '140px' }}>
-                        <Filter size={16} className="field-icon" />
+                    {/* Status Filter */}
+                    <div className="input-with-icon" style={{ width: '150px' }}>
+                        <Filter size={15} className="field-icon" />
                         <select
-                            style={{ paddingLeft: '36px', height: '42px' }}
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
                         >
                             <option value="All">All Status</option>
                             <option value="Active">Active</option>
@@ -111,47 +115,36 @@ const SubCategoryList = ({ onEdit, onDelete, showToast }) => {
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <button className="action-btn secondary" onClick={() => handleExport('PDF')}>
-                        <FileText size={18} /> Export PDF
-                    </button>
-                    <button className="action-btn secondary" onClick={() => handleExport('Excel')}>
-                        <Download size={18} /> Export Excel
-                    </button>
-                </div>
+                {/* Export — shared component */}
+                <ExportActions
+                    selectedCount={selectedRows.length}
+                    onExport={showToast}
+                />
             </div>
 
+            {/* ── Bulk Selection Bar ── */}
             {selectedRows.length > 0 && (
-                <div style={{
-                    padding: '12px 20px',
-                    background: 'rgba(99, 102, 241, 0.05)',
-                    borderBottom: '1px solid var(--border-color)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
-                    <span style={{ fontSize: '0.9rem', color: 'var(--primary-color)', fontWeight: 600 }}>
-                        {selectedRows.length} items selected
+                <div className="c-bulk-bar">
+                    <span>
+                        {selectedRows.length} {selectedRows.length === 1 ? 'item' : 'items'} selected
                     </span>
-                    <button
-                        style={{ background: 'none', color: '#ef4444', fontSize: '0.85rem', fontWeight: 600 }}
-                        onClick={() => setSelectedRows([])}
-                    >
-                        Clear Selection
-                    </button>
+                    <button onClick={() => setSelectedRows([])}>Clear Selection</button>
                 </div>
             )}
 
+            {/* ── Table ── */}
             <table className="dashboard-table">
                 <thead>
                     <tr>
-                        <th style={{ width: '50px' }}>
-                            <div onClick={toggleSelectAll} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                {selectedRows.length === paginatedData.length && paginatedData.length > 0 ? (
-                                    <CheckSquare size={18} color="var(--primary-color)" />
-                                ) : (
-                                    <Square size={18} color="#94a3b8" />
-                                )}
+                        <th style={{ width: '48px' }}>
+                            <div
+                                onClick={toggleSelectAll}
+                                style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                            >
+                                {selectedRows.length === paginatedData.length && paginatedData.length > 0
+                                    ? <CheckSquare size={17} color="var(--primary-color)" />
+                                    : <Square size={17} color="#94a3b8" />
+                                }
                             </div>
                         </th>
                         <th style={{ width: '60px' }}>Icon</th>
@@ -161,113 +154,118 @@ const SubCategoryList = ({ onEdit, onDelete, showToast }) => {
                         <th>Sub Category Name</th>
                         <th>Items / Products</th>
                         <th>Status</th>
-                        <th style={{ textAlign: 'right' }}>Actions</th>
+                        <th style={{ textAlign: 'center' }}>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedData.map((item) => (
-                        <tr key={item.id} className={selectedRows.includes(item.id) ? 'selected-row' : ''}>
-                            <td>
-                                <div onClick={() => toggleSelectRow(item.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                                    {selectedRows.includes(item.id) ? (
-                                        <CheckSquare size={18} color="var(--primary-color)" />
-                                    ) : (
-                                        <Square size={18} color="#94a3b8" />
-                                    )}
-                                </div>
-                            </td>
-                            <td>
-                                <div style={{
-                                    width: '36px', height: '36px', borderRadius: '6px',
-                                    background: '#f8fafc', display: 'flex',
-                                    alignItems: 'center', justifyContent: 'center',
-                                    fontSize: '1.1rem', border: '1px solid var(--border-color)'
-                                }}>
-                                    {item.icon}
-                                </div>
-                            </td>
-                            <td>
-                                <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>{item.catId}</span>
-                            </td>
-                            <td>
-                                <span style={{ fontWeight: 500, color: '#475569', fontSize: '0.9rem' }}>{item.category}</span>
-                            </td>
-                            <td>
-                                <span style={{
-                                    padding: '2px 6px',
-                                    background: '#f1f5f9',
-                                    borderRadius: '4px',
-                                    fontSize: '0.75rem',
-                                    color: '#64748b',
-                                    fontWeight: 700
-                                }}>
-                                    {item.id}
-                                </span>
-                            </td>
-                            <td>
-                                <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</div>
-                            </td>
-                            <td>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.85rem' }}>
-                                    <ListTree size={14} />
-                                    {item.innerSubs}
-                                </div>
-                            </td>
-                            <td>
-                                <span className={`badge ${item.status === 'Active' ? 'success' : 'error'}`}>
-                                    {item.status}
-                                </span>
-                            </td>
-                            <td>
-                                <div className="action-btns" style={{ justifyContent: 'flex-end' }}>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={() => onEdit?.(item)}
-                                        title="Edit"
-                                    >
-                                        <Edit2 size={18} />
-                                    </button>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={() => showToast(`${item.status === 'Active' ? 'Deactivated' : 'Activated'} ${item.name}`, 'success')}
-                                        title={item.status === 'Active' ? 'Deactivate' : 'Activate'}
-                                        style={{ color: item.status === 'Active' ? '#f59e0b' : '#10b981' }}
-                                    >
-                                        {item.status === 'Active' ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
-                                    </button>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={() => onDelete?.(item)}
-                                        title="Delete"
-                                        style={{ color: '#ef4444' }}
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
+                    {paginatedData.length === 0 ? (
+                        <tr>
+                            <td colSpan={9} style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
+                                No sub-categories found.
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        paginatedData.map((item) => (
+                            <tr
+                                key={item.id}
+                                className={selectedRows.includes(item.id) ? 'selected-row' : ''}
+                            >
+                                {/* Checkbox */}
+                                <td>
+                                    <div
+                                        onClick={() => toggleSelectRow(item.id)}
+                                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        {selectedRows.includes(item.id)
+                                            ? <CheckSquare size={17} color="var(--primary-color)" />
+                                            : <Square size={17} color="#94a3b8" />
+                                        }
+                                    </div>
+                                </td>
+
+                                {/* Icon */}
+                                <td>
+                                    <div className="category-icon-box">{item.icon}</div>
+                                </td>
+
+                                {/* Cat ID */}
+                                <td>
+                                    <span className="cat-id-badge">{item.catId}</span>
+                                </td>
+
+                                {/* Category Name */}
+                                <td>
+                                    <span style={{ fontWeight: 500, color: '#475569', fontSize: '0.9rem' }}>
+                                        {item.category}
+                                    </span>
+                                </td>
+
+                                {/* Sub ID */}
+                                <td>
+                                    <span className="cat-id-badge">{item.id}</span>
+                                </td>
+
+                                {/* Sub Category Name */}
+                                <td>
+                                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                                        {item.name}
+                                    </span>
+                                </td>
+
+                                {/* Items / Products */}
+                                <td>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.85rem' }}>
+                                        <ListTree size={14} />
+                                        {item.innerSubs}
+                                    </div>
+                                </td>
+
+                                {/* Status */}
+                                <td>
+                                    <span className={`badge ${item.status === 'Active' ? 'success' : 'error'}`}>
+                                        {item.status}
+                                    </span>
+                                </td>
+
+                                {/* Actions — shared ActionButtons component */}
+                                <td>
+                                    <ActionButtons
+                                        onEdit={() => onEdit?.(item)}
+                                        onToggleStatus={() => handleToggleStatus(item)}
+                                        onDelete={() => onDelete?.(item)}
+                                        isActive={item.status === 'Active'}
+                                    />
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
 
-            <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                    Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredData.length)} - {Math.min(currentPage * itemsPerPage, filteredData.length)} of {filteredData.length} items
+            {/* ── Pagination ── */}
+            <div className="c-pagination">
+                <span className="c-pagination-info">
+                    Showing{' '}
+                    {filteredData.length === 0
+                        ? 0
+                        : (currentPage - 1) * itemsPerPage + 1}–
+                    {Math.min(currentPage * itemsPerPage, filteredData.length)}{' '}
+                    of {filteredData.length} items
                 </span>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="c-pagination-btns">
                     <button
-                        className="mini-btn secondary"
+                        className="c-page-btn"
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(p => p - 1)}
                     >
-                        Previous
+                        <ChevronLeft size={14} /> Prev
                     </button>
                     <button
-                        className="mini-btn secondary"
-                        disabled={currentPage === totalPages}
+                        className="c-page-btn"
+                        disabled={currentPage === totalPages || totalPages === 0}
                         onClick={() => setCurrentPage(p => p + 1)}
                     >
-                        Next
+                        Next <ChevronRight size={14} />
                     </button>
                 </div>
             </div>
