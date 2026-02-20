@@ -1,14 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import VendorProductStats from './components/VendorProductStats';
 import VendorProductFilters from './components/VendorProductFilters';
 import VendorProductList from './components/VendorProductList';
 import AddProduct from './components/AddProduct/AddProduct';
 import ProductView from './components/ProductView';
-import { FileText, Download, ArrowLeft } from 'lucide-react';
+import Toast from '../../components/common/Toast/Toast';
+import { Plus, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import './VendorProducts.css';
 
 const VendorProductsPage = () => {
-
+    // Configuration Data
     const CATEGORIES_DATA = {
         'Electronics': ['Audio', 'Mobile', 'Laptop', 'Accessories', 'Camera'],
         'Fashion': ['Footwear', 'Men Wear', 'Women Wear', 'Kids Wear', 'Watches'],
@@ -121,7 +122,7 @@ const VendorProductsPage = () => {
         }
     ];
 
-
+    // State
     const [products, setProducts] = useState(MOCK_PRODUCTS.map(p => ({
         ...p,
         isActive: Math.random() > 0.3
@@ -131,7 +132,7 @@ const VendorProductsPage = () => {
     const [showAddPage, setShowAddPage] = useState(false);
     const [viewingProduct, setViewingProduct] = useState(null);
     const [editingProduct, setEditingProduct] = useState(null);
-
+    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -142,9 +143,12 @@ const VendorProductsPage = () => {
         search: '',
         brand: '',
         category: '',
-        subCategory: ''
+        subCategory: '',
+        stock: '',
+        status: ''
     });
 
+    // Stats Calculation
     const stats = {
         total: products.length,
         live: products.filter(p => p.isActive).length,
@@ -152,43 +156,37 @@ const VendorProductsPage = () => {
         outOfStock: products.filter(p => p.stock === 0).length
     };
 
+    // Toast Handler
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+    };
 
-
+    // Filtering Logic
     const filteredProducts = useMemo(() => {
         return products.filter(p => {
-
-            const searchMatch =
-                !filters.search ||
+            const searchMatch = !filters.search ||
                 p.name.toLowerCase().includes(filters.search.toLowerCase()) ||
                 p.brand.toLowerCase().includes(filters.search.toLowerCase());
 
-            const brandMatch =
-                !filters.brand || p.brand === filters.brand;
-
-            const categoryMatch =
-                !filters.category || p.category === filters.category;
-
-            const subCategoryMatch =
-                !filters.subCategory || p.subCategory === filters.subCategory;
-
-            const stockMatch =
-                !filters.stock ||
+            const brandMatch = !filters.brand || p.brand === filters.brand;
+            const categoryMatch = !filters.category || p.category === filters.category;
+            const subCategoryMatch = !filters.subCategory || p.subCategory === filters.subCategory;
+            const stockMatch = !filters.stock ||
                 (filters.stock === 'high' && p.stock > 10) ||
                 (filters.stock === 'low' && p.stock > 0 && p.stock <= 10) ||
                 (filters.stock === 'out' && p.stock === 0);
 
-            const statusMatch =
-                !filters.status ||
+            const statusMatch = !filters.status ||
                 (filters.status === 'approved' && p.isApproved) ||
                 (filters.status === 'pending' && !p.isApproved && !p.rejectionReason) ||
                 (filters.status === 'rejected' && p.rejectionReason);
 
             return searchMatch && brandMatch && categoryMatch && subCategoryMatch && stockMatch && statusMatch;
-
         });
     }, [products, filters]);
 
-
+    // Pagination Logic
     const paginatedData = useMemo(() => {
         const start = (pagination.page - 1) * pagination.limit;
         return filteredProducts.slice(start, start + pagination.limit);
@@ -196,6 +194,7 @@ const VendorProductsPage = () => {
 
     const totalPages = Math.ceil(filteredProducts.length / pagination.limit);
 
+    // Handlers
     const handleSelectRow = (id, checked) => {
         if (checked) {
             setSelectedRows(prev => [...prev, id]);
@@ -212,23 +211,15 @@ const VendorProductsPage = () => {
         }
     };
 
-    const handleExport = (type) => {
-        const data = selectedRows.length > 0
-            ? products.filter(p => selectedRows.includes(p.id))
-            : filteredProducts;
-
-        console.log(`Exporting ${data.length} records to ${type}`);
+    const handleExport = (message, type) => {
+        showToast(message, type);
     };
 
     const handleToggleStatus = (id) => {
-        setProducts(prev => prev.map(p =>
-            p.id === id ? { ...p, isActive: !p.isActive } : p
-        ));
+        setProducts(prev => prev.map(p => p.id === id ? { ...p, isActive: !p.isActive } : p));
     };
 
-    const handleView = (product) => {
-        setViewingProduct(product);
-    };
+    const handleView = (product) => setViewingProduct(product);
 
     const handleEdit = (product) => {
         setEditingProduct(product);
@@ -240,7 +231,6 @@ const VendorProductsPage = () => {
         setEditingProduct(null);
     };
 
-
     return (
         <div className="products-module management-module">
             {viewingProduct && (
@@ -251,39 +241,21 @@ const VendorProductsPage = () => {
             )}
 
             {!showAddPage ? (
-
                 <>
                     {/* Header */}
-                    <div className="products-header" style={{ marginBottom: '24px' }}>
+                    <div className="products-header">
                         <div>
-                            <h1 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700 }}>
-                                Vendor Products
+                            <h1 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700, color: 'var(--text-primary)' }}>
+                                My Products
                             </h1>
-                            <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                Manage your product inventory
+                            <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>
+                                Manage your product inventory and track approval status
                             </p>
                         </div>
 
                         <div style={{ display: 'flex', gap: '12px' }}>
-                            <button
-                                className="action-btn secondary"
-                                onClick={() => handleExport('excel')}
-                            >
-                                <Download size={18} /> Excel
-                            </button>
-
-                            <button
-                                className="action-btn secondary"
-                                onClick={() => handleExport('pdf')}
-                            >
-                                <Download size={18} /> PDF
-                            </button>
-
-                            <button
-                                className="action-btn primary"
-                                onClick={() => setShowAddPage(true)}
-                            >
-                                Add Product
+                            <button className="btn btn-primary" onClick={() => setShowAddPage(true)}>
+                                <Plus size={18} /> Add Product
                             </button>
                         </div>
                     </div>
@@ -291,93 +263,72 @@ const VendorProductsPage = () => {
                     {/* Stats */}
                     <VendorProductStats stats={stats} />
 
-                    {/* Filters */}
-                    <VendorProductFilters
-                        filters={filters}
-                        setFilters={setFilters}
-                        categories={CATEGORIES_DATA}
-                        brands={BRANDS_DATA}
-                        onClear={() => setFilters({
-                            search: '',
-                            brand: '',
-                            category: '',
-                            subCategory: '',
-                            stock: '',
-                            status: ''
-                        })}
-                    />
+                    {/* Unified Section */}
+                    <div className="products-table-section">
+                        <VendorProductFilters
+                            filters={filters}
+                            setFilters={setFilters}
+                            categories={CATEGORIES_DATA}
+                            brands={BRANDS_DATA}
+                            selectedCount={selectedRows.length}
+                            onExport={handleExport}
+                            onClear={() => setFilters({
+                                search: '', brand: '', category: '', subCategory: '', stock: '', status: ''
+                            })}
+                        />
 
-                    {/* Table */}
-                    <VendorProductList
-                        products={paginatedData}
-                        selectedRows={selectedRows}
-                        onSelectRow={handleSelectRow}
-                        onSelectAll={handleSelectAll}
-                        onView={handleView}
-                        onEdit={handleEdit}
-                        onToggleStatus={handleToggleStatus}
-                    />
+                        <VendorProductList
+                            products={paginatedData}
+                            selectedRows={selectedRows}
+                            onSelectRow={handleSelectRow}
+                            onSelectAll={handleSelectAll}
+                            onView={handleView}
+                            onEdit={handleEdit}
+                            onToggleStatus={handleToggleStatus}
+                        />
 
-                    {/* Pagination */}
-                    <div className="vendor-pagination">
-                        <button
-                            disabled={pagination.page === 1}
-                            onClick={() =>
-                                setPagination(prev => ({ ...prev, page: prev.page - 1 }))
-                            }
-                        >
-                            Previous
-                        </button>
-
-                        <span>
-                            Page {pagination.page} of {totalPages || 1}
-                        </span>
-
-                        <button
-                            disabled={pagination.page === totalPages}
-                            onClick={() =>
-                                setPagination(prev => ({ ...prev, page: prev.page + 1 }))
-                            }
-                        >
-                            Next
-                        </button>
+                        {/* Pagination */}
+                        <div className="c-pagination" style={{ borderTop: '1px solid var(--border-color)', background: '#f8fafc' }}>
+                            <span className="c-pagination-info">
+                                Showing {Math.min((pagination.page - 1) * pagination.limit + 1, filteredProducts.length)}–{Math.min(pagination.page * pagination.limit, filteredProducts.length)} of {filteredProducts.length} products
+                            </span>
+                            <div className="c-pagination-btns" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <button
+                                    className="c-page-btn"
+                                    disabled={pagination.page === 1}
+                                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                                >
+                                    <ChevronLeft size={14} /> Prev
+                                </button>
+                                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', padding: '0 4px' }}>
+                                    {pagination.page} / {totalPages || 1}
+                                </span>
+                                <button
+                                    className="c-page-btn"
+                                    disabled={pagination.page === totalPages || totalPages === 0}
+                                    onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                                >
+                                    Next <ChevronRight size={14} />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </>
-
             ) : (
-
                 <>
                     {/* Add Product Header */}
-                    <div className="products-add-header" style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '20px',
-                        marginBottom: '32px'
-                    }}>
-                        <button
-                            className="action-btn secondary"
-                            onClick={handleBack}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                padding: '10px 20px',
-                                fontWeight: 600
-                            }}
-                        >
+                    <div className="products-header">
+                        <button className="btn btn-secondary" onClick={handleBack}>
                             <ArrowLeft size={18} /> Back
                         </button>
-
+                        <h1 style={{ fontSize: '1.5rem', margin: 0, fontWeight: 700 }}>
+                            {editingProduct ? 'Edit Product' : 'Add New Product'}
+                        </h1>
                     </div>
 
-                    {/* Add Product Component */}
                     <AddProduct
-                        categories={{
-                            'Electronics': ['Mobile', 'Laptop', 'Accessories'],
-                            'Fashion': ['Men', 'Women', 'Kids'],
-                            'Groceries': ['Fruits', 'Vegetables', 'Dairy']
-                        }}
-                        brands={['Sony', 'Samsung', 'Nike', 'Adidas', 'Apple']}
+                        categories={CATEGORIES_DATA}
+                        brands={BRANDS_DATA}
                         onBack={handleBack}
                         initialData={editingProduct}
                         onSave={(newProducts) => {
@@ -392,12 +343,17 @@ const VendorProductsPage = () => {
                         }}
                     />
                 </>
-
             )}
 
+            {toast.show && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast({ ...toast, show: false })}
+                />
+            )}
         </div>
     );
-
 };
 
 export default VendorProductsPage;
