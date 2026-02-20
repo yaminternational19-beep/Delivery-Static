@@ -46,26 +46,13 @@ const VendorManagement = () => {
         switch (activeTab) {
             case 'overview':
                 return (
-                    <>
-                        <VendorStats />
-                        <div style={{ marginTop: '24px' }}>
-                            <div className="vendor-module-header">
-                                <h3>Active Partners</h3>
-                                <div style={{ display: 'flex', gap: '12px' }}>
-                                    <button className="action-btn primary" onClick={() => { setEditingVendor(null); setShowForm(true); }}>
-                                        <Plus size={18} /> Add New Vendor
-                                    </button>
-                                </div>
-                            </div>
-                            <VendorList
-                                onEdit={handleEditVendor}
-                                onStatusToggle={handleStatusToggle}
-                                onDelete={handleDeleteVendor}
-                                showToast={showToast}
-                                onTabChange={setActiveTab}
-                            />
-                        </div>
-                    </>
+                    <VendorList
+                        onEdit={handleEditVendor}
+                        onStatusToggle={handleStatusToggle}
+                        onDelete={handleDeleteVendor}
+                        showToast={showToast}
+                        onTabChange={setActiveTab}
+                    />
                 );
             case 'tiering':
                 return <VendorTiering />;
@@ -79,45 +66,74 @@ const VendorManagement = () => {
     };
 
     return (
-        <div className="management-module">
-            <div className="vendor-module-header">
+        <div className="page-wrapper">
+            {/* Toast Notification - Floating at Right Top */}
+            {toast.show && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast({ ...toast, show: false })}
+                />
+            )}
+
+            {/* Page Header */}
+            <div className="list-header" style={{ marginBottom: '32px' }}>
                 <div>
-                    <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Vendor Portal Management</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>
-                        Manage platform partners, onboarding, and kyc verification
-                    </p>
+                    <h1 className="header-title" style={{ fontSize: '2rem', fontWeight: 800, color: '#1e293b' }}>Vendor Management</h1>
+                    <p className="header-subtitle" style={{ fontSize: '1rem', color: '#64748b' }}>Manage platform partners, onboarding, and kyc verification</p>
                 </div>
-                {!showForm && (
-                    <div className="vendor-tabs">
-                        <button
-                            className={`vendor-tab ${activeTab === 'overview' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('overview')}
-                        >
-                            <Users size={16} /> Overview
-                        </button>
-                        <button
-                            className={`vendor-tab ${activeTab === 'kyc' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('kyc')}
-                        >
-                            <ShieldCheck size={16} /> KYC Verification
-                        </button>
-                        <button
-                            className={`vendor-tab ${activeTab === 'tiering' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('tiering')}
-                        >
-                            <Award size={16} /> Tier Management
-                        </button>
-                        <button
-                            className={`vendor-tab ${activeTab === 'logs' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('logs')}
-                        >
-                            <History size={16} /> Activity Logs
-                        </button>
-                    </div>
+                {!showForm && activeTab === 'overview' && (
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => { setEditingVendor(null); setShowForm(true); }}
+                        style={{ height: '44px', padding: '0 24px', fontSize: '15px' }}
+                    >
+                        <Plus size={20} /> Add New Vendor
+                    </button>
                 )}
             </div>
 
-            {renderContent()}
+            {!showForm && (
+                <>
+                    <VendorStats />
+
+                    {/* Tabs */}
+                    <div className="flex gap-md mb-4" style={{ marginBottom: '24px', marginTop: '24px' }}>
+                        <button
+                            className={`btn ${activeTab === 'overview' ? 'btn-primary' : 'btn-secondary'}`}
+                            onClick={() => setActiveTab('overview')}
+                            style={{ padding: '0 24px' }}
+                        >
+                            Overview
+                        </button>
+                        <button
+                            className={`btn ${activeTab === 'kyc' ? 'btn-primary' : 'btn-secondary'}`}
+                            onClick={() => setActiveTab('kyc')}
+                            style={{ padding: '0 24px' }}
+                        >
+                            KYC Verification
+                        </button>
+                        <button
+                            className={`btn ${activeTab === 'tiering' ? 'btn-primary' : 'btn-secondary'}`}
+                            onClick={() => setActiveTab('tiering')}
+                            style={{ padding: '0 24px' }}
+                        >
+                            Tier Management
+                        </button>
+                        <button
+                            className={`btn ${activeTab === 'logs' ? 'btn-primary' : 'btn-secondary'}`}
+                            onClick={() => setActiveTab('logs')}
+                            style={{ padding: '0 24px' }}
+                        >
+                            Activity Logs
+                        </button>
+                    </div>
+                </>
+            )}
+
+            <div className="content-container">
+                {renderContent()}
+            </div>
 
             {showForm && (
                 <VendorForm
@@ -128,15 +144,6 @@ const VendorManagement = () => {
                         setEditingVendor(null);
                         showToast(`Vendor ${name} ${editingVendor ? 'updated' : 'registered'} successfully!`, 'success');
                     }}
-                />
-            )}
-
-
-            {toast.show && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    onClose={() => setToast({ ...toast, show: false })}
                 />
             )}
         </div>

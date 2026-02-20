@@ -38,31 +38,53 @@ const VendorStats = () => {
     ];
 
     return (
-        <div className="vendor-stats-panel">
-            {stats.map((stat, i) => (
-                <div key={i} className="stat-v-card">
-                    <div className="stat-v-icon" style={{ background: `${stat.color}15`, color: stat.color }}>
-                        <stat.icon size={24} />
-                    </div>
-                    <div className="stat-v-info">
-                        <p>{stat.title}</p>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                            <h3>{stat.value}</h3>
-                            <span style={{
-                                fontSize: '0.75rem',
-                                fontWeight: 700,
-                                color: stat.trend.startsWith('+') ? '#10b981' : '#ef4444',
-                                display: 'flex',
-                                alignItems: 'center'
-                            }}>
-                                {stat.trend}
-                                {stat.trend.startsWith('+') ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                            </span>
+        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '12px' }}>
+            {stats.map((stat, idx) => {
+                const Icon = stat.icon;
+                return (
+                    <div key={idx} className="stat-card" style={{
+                        background: 'white',
+                        padding: '24px',
+                        borderRadius: '16px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '20px'
+                    }}>
+                        <div style={{
+                            width: '56px',
+                            height: '56px',
+                            borderRadius: '14px',
+                            background: `${stat.color}15`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: stat.color
+                        }}>
+                            <Icon size={28} />
                         </div>
-                        <p style={{ fontSize: '0.75rem', marginTop: '4px' }}>{stat.subText}</p>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600 }}>{stat.title}</span>
+                                <span style={{
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    color: stat.trend.startsWith('+') ? '#10b981' : '#ef4444',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    background: stat.trend.startsWith('+') ? '#ecfdf5' : '#fef2f2',
+                                    padding: '2px 6px',
+                                    borderRadius: '6px'
+                                }}>
+                                    {stat.trend}
+                                </span>
+                            </div>
+                            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1e293b', marginTop: '4px' }}>{stat.value}</div>
+                            <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>{stat.subText}</div>
+                        </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };

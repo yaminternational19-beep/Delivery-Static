@@ -121,8 +121,8 @@ const VendorTiering = () => {
                         </div>
 
                         <button
-                            className="action-btn primary"
-                            style={{ width: '100%', marginTop: '24px', background: tier.color }}
+                            className="btn btn-primary"
+                            style={{ width: '100%', marginTop: '24px', background: tier.color, border: 'none', justifyContent: 'center' }}
                             onClick={() => handleEdit(tier)}
                         >
                             Manage Tier Settings
@@ -137,7 +137,7 @@ const VendorTiering = () => {
                     <div className="card" style={{ width: '500px', padding: '0', overflow: 'hidden' }}>
                         <div className="modal-header">
                             <h3 style={{ margin: 0 }}>Edit {formData.name}</h3>
-                            <button className="icon-btn" onClick={() => setEditingTier(null)}><X size={20} /></button>
+                            <button className="icon-btn-sm" onClick={() => setEditingTier(null)}><X size={20} /></button>
                         </div>
                         <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
                             <div className="form-group">
@@ -189,9 +189,9 @@ const VendorTiering = () => {
                             </div>
                         </div>
                         <div style={{ padding: '20px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                            <button className="action-btn secondary" onClick={() => setEditingTier(null)}>Cancel</button>
-                            <button className="action-btn primary" onClick={handleSave}>
-                                <Save size={18} /> Save Changes
+                            <button className="btn btn-secondary" onClick={() => setEditingTier(null)}>Cancel</button>
+                            <button className="btn btn-primary" onClick={handleSave}>
+                                <Save size={16} /> Save Changes
                             </button>
                         </div>
                     </div>

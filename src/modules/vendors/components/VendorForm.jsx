@@ -239,7 +239,7 @@ const VendorForm = ({ onCancel, onSave, initialData }) => {
                                         placeholder="Lat / Long"
                                     />
                                 </div>
-                                <button type="button" className="action-btn secondary" style={{ whiteSpace: 'nowrap' }}>Pick from Map</button>
+                                <button type="button" className="btn btn-secondary" style={{ whiteSpace: 'nowrap', height: '44px' }}>Pick from Map</button>
                             </div>
                         </div>
                     </div>
@@ -326,7 +326,7 @@ const VendorForm = ({ onCancel, onSave, initialData }) => {
                         <h3 style={{ margin: 0 }}>Register New Vendor</h3>
                         <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#64748b' }}>Onboard a professional partner to the platform</p>
                     </div>
-                    <button className="icon-btn" onClick={onCancel}><X size={20} /></button>
+                    <button className="icon-btn-sm" onClick={onCancel}><X size={20} /></button>
                 </div>
 
                 <div style={{ padding: '20px', background: '#f8fafc', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between' }}>
@@ -355,21 +355,21 @@ const VendorForm = ({ onCancel, onSave, initialData }) => {
 
                 <div style={{ padding: '24px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between' }}>
                     <button
-                        className="action-btn secondary"
+                        className="btn btn-secondary"
                         onClick={() => step > 1 && setStep(step - 1)}
                         disabled={step === 1}
                     >
                         <ArrowLeft size={16} /> Previous
                     </button>
                     {step < 4 ? (
-                        <button className="action-btn primary" onClick={() => setStep(step + 1)}>
+                        <button className="btn btn-primary" onClick={() => setStep(step + 1)}>
                             Next Step <ArrowRight size={16} />
                         </button>
                     ) : (
                         <button
-                            className="action-btn primary"
+                            className="btn btn-primary"
                             onClick={() => onSave?.(formData.businessName)}
-                            style={{ background: '#10b981' }}
+                            style={{ background: 'linear-gradient(135deg,#10b981,#059669)', border: 'none' }}
                         >
                             Finish Registration <Check size={16} />
                         </button>
