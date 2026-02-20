@@ -10,7 +10,7 @@ const SubAdminStats = () => {
     ];
 
     return (
-        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '12px' }}>
+        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
             {stats.map((stat, idx) => {
                 const Icon = stat.icon;
                 return (

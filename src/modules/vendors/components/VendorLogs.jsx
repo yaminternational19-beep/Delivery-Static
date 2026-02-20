@@ -58,57 +58,59 @@ const VendorLogs = ({ showToast }) => {
     const handleExport = (message, type) => { showToast(message, type); };
 
     return (
-        <div className="list-wrapper">
+        <div className="c-table-container">
             {/* Filter Bar */}
-            <div className="filter-bar">
+            <div className="v-table-controls">
                 <div style={{ display: 'flex', gap: '8px', flex: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-                    <div className="filter-search" style={{ flex: '0 1 200px' }}>
-                        <Search className="search-icon" size={18} />
+                    <div className="c-search">
+                        <Search className="search-icon" size={16} />
                         <input
                             type="text"
-                            className="search-input"
                             placeholder="Search logs..."
                             value={filters.search}
                             onChange={(e) => handleFilterChange('search', e.target.value)}
                         />
                     </div>
 
-                    <select
-                        className="filter-select"
-                        style={{ width: '170px' }}
-                        value={filters.companyName}
-                        onChange={(e) => handleFilterChange('companyName', e.target.value)}
-                    >
-                        <option value="">All Companies</option>
-                        {uniqueCompanies.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <div className="input-with-icon" style={{ width: '170px' }}>
+                        <History size={15} className="field-icon" />
+                        <select
+                            value={filters.companyName}
+                            onChange={(e) => handleFilterChange('companyName', e.target.value)}
+                        >
+                            <option value="">All Companies</option>
+                            {uniqueCompanies.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                    </div>
 
-                    <select
-                        className="filter-select"
-                        style={{ width: '150px' }}
-                        value={filters.actionType}
-                        onChange={(e) => handleFilterChange('actionType', e.target.value)}
-                    >
-                        <option value="All">All Actions</option>
-                        <option value="Product">Product Updates</option>
-                        <option value="Login">Access Logs</option>
-                        <option value="KYC">Security / KYC</option>
-                        <option value="Finance">Financials</option>
-                    </select>
+                    <div className="input-with-icon" style={{ width: '150px' }}>
+                        <LogIn size={15} className="field-icon" />
+                        <select
+                            value={filters.actionType}
+                            onChange={(e) => handleFilterChange('actionType', e.target.value)}
+                        >
+                            <option value="All">All Actions</option>
+                            <option value="Product">Product Updates</option>
+                            <option value="Login">Access Logs</option>
+                            <option value="KYC">Security / KYC</option>
+                            <option value="Finance">Financials</option>
+                        </select>
+                    </div>
 
-                    <select
-                        className="filter-select"
-                        style={{ width: '130px' }}
-                        value={filters.status}
-                        onChange={(e) => handleFilterChange('status', e.target.value)}
-                    >
-                        <option value="All">All Status</option>
-                        <option value="Success">Success</option>
-                        <option value="Failed">Failed</option>
-                    </select>
+                    <div className="input-with-icon" style={{ width: '130px' }}>
+                        <ShieldAlert size={15} className="field-icon" />
+                        <select
+                            value={filters.status}
+                            onChange={(e) => handleFilterChange('status', e.target.value)}
+                        >
+                            <option value="All">All Status</option>
+                            <option value="Success">Success</option>
+                            <option value="Failed">Failed</option>
+                        </select>
+                    </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'white', padding: '0 12px', borderRadius: '10px', border: '1px solid #e2e8f0', height: '42px' }}>
-                        <Calendar size={16} color="#94a3b8" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f8fafc', padding: '0 12px', borderRadius: '10px', border: '1px solid var(--border-color)', height: '40px' }}>
+                        <Calendar size={15} color="#94a3b8" />
                         <input
                             type="date"
                             value={filters.fromDate}
@@ -134,14 +136,13 @@ const VendorLogs = ({ showToast }) => {
             </div>
 
             {/* Table Section */}
-            <div className="table-container">
-                <table className="data-table">
+            <div style={{ overflowX: 'auto' }}>
+                <table className="dashboard-table">
                     <thead>
                         <tr>
-                            <th className="col-checkbox">
+                            <th style={{ width: '48px' }}>
                                 <input
                                     type="checkbox"
-                                    className="checkbox-input"
                                     checked={filteredLogs.length > 0 && selectedRows.length === filteredLogs.length}
                                     onChange={handleSelectAll}
                                 />
@@ -154,16 +155,15 @@ const VendorLogs = ({ showToast }) => {
                             <th>Details</th>
                             <th>IP Address</th>
                             <th>Timestamp</th>
-                            <th>Status</th>
+                            <th style={{ textAlign: 'center' }}>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredLogs.map((log) => (
                             <tr key={log.id} style={{ background: selectedRows.includes(log.id) ? '#f8fafc' : 'white' }}>
-                                <td className="col-checkbox">
+                                <td style={{ width: '48px', textAlign: 'center' }}>
                                     <input
                                         type="checkbox"
-                                        className="checkbox-input"
                                         checked={selectedRows.includes(log.id)}
                                         onChange={() => handleSelectOne(log.id)}
                                     />
@@ -215,21 +215,15 @@ const VendorLogs = ({ showToast }) => {
             </div>
 
             {/* Pagination Section */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', padding: '16px 20px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e6eaf0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Showing</span>
-                    <span style={{ padding: '4px 10px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>
-                        {filteredLogs.length}
-                    </span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>of</span>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>{mockLogs.length}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>results</span>
-                </div>
-                <div className="btn-group">
-                    <button className="btn btn-secondary" style={{ height: '34px', fontSize: '13px' }} disabled>
-                        <ChevronLeft size={16} /> Previous
+            <div className="c-pagination" style={{ borderTop: '1px solid var(--border-color)' }}>
+                <span className="c-pagination-info">
+                    Showing {filteredLogs.length} of {mockLogs.length} results
+                </span>
+                <div className="c-pagination-btns">
+                    <button className="c-page-btn" disabled>
+                        <ChevronLeft size={16} /> Prev
                     </button>
-                    <button className="btn btn-secondary" style={{ height: '34px', fontSize: '13px' }}>
+                    <button className="c-page-btn">
                         Next <ChevronRight size={16} />
                     </button>
                 </div>

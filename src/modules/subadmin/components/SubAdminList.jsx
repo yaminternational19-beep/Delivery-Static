@@ -88,11 +88,11 @@ const SubAdminList = ({ onEdit, onEditPermissions, onDeactivate, onDelete, onSho
     };
 
     return (
-        <div className="list-wrapper">
+        <div className="c-table-container">
             {/* Filter Bar */}
             <div className="v-table-controls">
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <div className="v-search">
+                    <div className="c-search">
                         <Search className="search-icon" size={16} />
                         <input
                             type="text"
@@ -133,8 +133,9 @@ const SubAdminList = ({ onEdit, onEditPermissions, onDeactivate, onDelete, onSho
             )}
 
             {/* Table Section */}
-            <div className="table-container" style={{ borderTop: 'none', borderRadius: '0' }}>
-                <table className="data-table">
+            <div style={{ overflowX: 'auto' }}>
+                <table className="dashboard-table">
+
                     <thead>
                         <tr>
                             <th style={{ width: '48px' }}>
@@ -230,9 +231,7 @@ const SubAdminList = ({ onEdit, onEditPermissions, onDeactivate, onDelete, onSho
                 </table>
             </div>
 
-            {/* Pagination Section */}
-            {/* Pagination — updated to c-pagination */}
-            <div className="c-pagination" style={{ borderTop: 'none', background: 'white', border: '1px solid var(--border-color)', borderRadius: '0 0 16px 16px' }}>
+            <div className="c-pagination" style={{ borderTop: '1px solid var(--border-color)' }}>
                 <span className="c-pagination-info">
                     Showing {filteredSubAdmins.length} of {subAdmins.length} entries
                 </span>

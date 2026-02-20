@@ -66,7 +66,7 @@ const VendorManagement = () => {
     };
 
     return (
-        <div className="page-wrapper">
+        <div className="v-module management-module" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Toast Notification - Floating at Right Top */}
             {toast.show && (
                 <Toast
@@ -77,18 +77,17 @@ const VendorManagement = () => {
             )}
 
             {/* Page Header */}
-            <div className="list-header" style={{ marginBottom: '32px' }}>
-                <div>
-                    <h1 className="header-title" style={{ fontSize: '2rem', fontWeight: 800, color: '#1e293b' }}>Vendor Management</h1>
-                    <p className="header-subtitle" style={{ fontSize: '1rem', color: '#64748b' }}>Manage platform partners, onboarding, and kyc verification</p>
+            <div className="module-intro">
+                <div className="intro-content">
+                    <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>Vendor Management</h1>
+                    <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0 }}>Manage platform partners, onboarding, and kyc verification</p>
                 </div>
                 {!showForm && activeTab === 'overview' && (
                     <button
                         className="btn btn-primary"
                         onClick={() => { setEditingVendor(null); setShowForm(true); }}
-                        style={{ height: '44px', padding: '0 24px', fontSize: '15px' }}
                     >
-                        <Plus size={20} /> Add New Vendor
+                        <Plus size={18} /> Add New Vendor
                     </button>
                 )}
             </div>
@@ -98,38 +97,35 @@ const VendorManagement = () => {
                     <VendorStats />
 
                     {/* Tabs */}
-                    <div className="flex gap-md mb-4" style={{ marginBottom: '24px', marginTop: '24px' }}>
+                    <div className="tab-group-pills">
                         <button
-                            className={`btn ${activeTab === 'overview' ? 'btn-primary' : 'btn-secondary'}`}
+                            className={activeTab === 'overview' ? 'active' : ''}
                             onClick={() => setActiveTab('overview')}
-                            style={{ padding: '0 24px' }}
                         >
-                            Overview
+                            <Users size={16} /> Overview
                         </button>
                         <button
-                            className={`btn ${activeTab === 'kyc' ? 'btn-primary' : 'btn-secondary'}`}
+                            className={activeTab === 'kyc' ? 'active' : ''}
                             onClick={() => setActiveTab('kyc')}
-                            style={{ padding: '0 24px' }}
                         >
-                            KYC Verification
+                            <ShieldCheck size={16} /> KYC Verification
                         </button>
                         <button
-                            className={`btn ${activeTab === 'tiering' ? 'btn-primary' : 'btn-secondary'}`}
+                            className={activeTab === 'tiering' ? 'active' : ''}
                             onClick={() => setActiveTab('tiering')}
-                            style={{ padding: '0 24px' }}
                         >
-                            Tier Management
+                            <Award size={16} /> Tier Management
                         </button>
                         <button
-                            className={`btn ${activeTab === 'logs' ? 'btn-primary' : 'btn-secondary'}`}
+                            className={activeTab === 'logs' ? 'active' : ''}
                             onClick={() => setActiveTab('logs')}
-                            style={{ padding: '0 24px' }}
                         >
-                            Activity Logs
+                            <History size={16} /> Activity Logs
                         </button>
                     </div>
                 </>
             )}
+
 
             <div className="content-container">
                 {renderContent()}

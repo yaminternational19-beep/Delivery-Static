@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, ClipboardList } from 'lucide-react';
+import { Users, Shield, Terminal } from 'lucide-react';
 import SubAdminList from './components/SubAdminList';
 import SubAdminForm from './components/SubAdminForm';
 import SubAdminPermissions from './components/SubAdminPermissions';
@@ -39,7 +39,7 @@ const SubAdminsPage = () => {
     };
 
     return (
-        <div className="page-wrapper">
+        <div className="subadmin-module management-module" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Toast Notification - Floating at Right Top */}
             {toast.show && (
                 <Toast
@@ -50,18 +50,17 @@ const SubAdminsPage = () => {
             )}
 
             {/* Page Header */}
-            <div className="list-header" style={{ marginBottom: '32px' }}>
-                <div>
-                    <h1 className="header-title" style={{ fontSize: '2rem', fontWeight: 800, color: '#1e293b' }}>Sub-Admin Management</h1>
-                    <p className="header-subtitle" style={{ fontSize: '1rem', color: '#64748b' }}>Manage system administrators and their relative permissions</p>
+            <div className="module-intro">
+                <div className="intro-content">
+                    <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1e293b', margin: 0 }}>Sub-Admin Management</h1>
+                    <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0 }}>Manage system administrators and their relative permissions</p>
                 </div>
                 {activeTab === 'users' && (
                     <button
                         className="btn btn-primary"
                         onClick={() => setModal({ open: true, type: 'form', user: null })}
-                        style={{ height: '44px', padding: '0 24px', fontSize: '15px' }}
                     >
-                        <Users size={20} />
+                        <Users size={18} />
                         Add New Sub-Admin
                     </button>
                 )}
@@ -71,22 +70,21 @@ const SubAdminsPage = () => {
             <SubAdminStats />
 
             {/* Tabs */}
-            <div className="flex gap-md mb-4" style={{ marginBottom: '24px' }}>
+            <div className="tab-group-pills">
                 <button
-                    className={`btn ${activeTab === 'users' ? 'btn-primary' : 'btn-secondary'}`}
+                    className={activeTab === 'users' ? 'active' : ''}
                     onClick={() => setActiveTab('users')}
-                    style={{ padding: '0 24px' }}
                 >
-                    Sub-Admins
+                    <Shield size={16} /> Sub-Admins
                 </button>
                 <button
-                    className={`btn ${activeTab === 'logs' ? 'btn-primary' : 'btn-secondary'}`}
+                    className={activeTab === 'logs' ? 'active' : ''}
                     onClick={() => setActiveTab('logs')}
-                    style={{ padding: '0 24px' }}
                 >
-                    Access Logs
+                    <Terminal size={16} /> Access Logs
                 </button>
             </div>
+
 
             {/* Content Area */}
             {activeTab === 'users' ? (

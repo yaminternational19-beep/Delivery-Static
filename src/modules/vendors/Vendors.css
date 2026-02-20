@@ -54,34 +54,7 @@
     margin-bottom: 8px;
 }
 
-.vendor-tabs {
-    display: flex;
-    gap: 12px;
-    background: #f1f5f9;
-    padding: 6px;
-    border-radius: 12px;
-}
 
-.vendor-tab {
-    padding: 8px 16px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #64748b;
-    cursor: pointer;
-    border-radius: 8px;
-    border: none;
-    background: transparent;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.vendor-tab.active {
-    background: white;
-    color: var(--primary-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
 
 /* Vendor List Table */
 .v-table-container {
