@@ -13,60 +13,80 @@ const INITIAL_MOCK_ORDERS = [
     {
         id: '1001',
         customerName: 'John Doe',
+        customerId: 'CUST-1001',
         customerPhone: '+91 98888 77777',
+        customerEmail: 'john@example.com',
         productsCount: 2,
         totalAmount: 38985,
         paymentMethod: 'Online',
+        paymentStatus: 'Paid',
         status: 'Pending',
         assignedRider: null,
         deliveryAddress: 'Street 4, MG Road, Bangalore',
         createdDate: '19 Feb 2026',
-        items: [{ name: 'Sony WH-1000XM5', qty: 1, price: 29990 }, { name: 'Nike Air Max 270', qty: 1, price: 8995 }]
+        deliveredDate: '-',
+        items: [{ name: 'Sony WH-1000XM5', productId: 'SKU-501', qty: 1, price: 29990, image: 'https://placehold.co/40' }, { name: 'Nike Air Max 270', productId: 'SKU-502', qty: 1, price: 8995 }],
+        productImage: 'https://placehold.co/40'
     },
     {
         id: '1002',
         customerName: 'Alice Smith',
+        customerId: 'CUST-1002',
         customerPhone: '+91 77777 66666',
+        customerEmail: 'alice@example.com',
         productsCount: 1,
         totalAmount: 124999,
         paymentMethod: 'COD',
+        paymentStatus: 'Pending',
         status: 'Pending',
         assignedRider: null,
         deliveryAddress: 'Flat 202, Sunshine Apts, Delhi',
         createdDate: '19 Feb 2026',
-        items: [{ name: 'Samsung Galaxy S24', qty: 1, price: 124999 }]
+        deliveredDate: '-',
+        items: [{ name: 'Samsung Galaxy S24', productId: 'SKU-601', qty: 1, price: 124999, image: 'https://placehold.co/40' }],
+        productImage: 'https://placehold.co/40'
     },
     {
         id: '1003',
         customerName: 'Bob Martin',
+        customerId: 'CUST-1003',
         customerPhone: '+91 90000 11111',
+        customerEmail: 'bob@example.com',
         productsCount: 1,
         totalAmount: 13495,
         paymentMethod: 'Online',
+        paymentStatus: 'Paid',
         status: 'Pending',
         assignedRider: null,
         deliveryAddress: 'House 12, Sector 15, Noida',
         createdDate: '18 Feb 2026',
-        items: [{ name: 'Logitech G Pro X', qty: 1, price: 13495 }]
+        deliveredDate: '-',
+        items: [{ name: 'Logitech G Pro X', productId: 'SKU-701', qty: 1, price: 13495, image: 'https://placehold.co/40' }],
+        productImage: 'https://placehold.co/40'
     },
     {
         id: '1004',
         customerName: 'Carol White',
+        customerId: 'CUST-1004',
         customerPhone: '+91 88888 99999',
+        customerEmail: 'carol@example.com',
         productsCount: 3,
         totalAmount: 192,
         paymentMethod: 'COD',
+        paymentStatus: 'Pending',
         status: 'Pending',
         assignedRider: null,
         deliveryAddress: 'Villa 5, Green Park, Mumbai',
         createdDate: '19 Feb 2026',
-        items: [{ name: 'Amul Gold Milk 1L', qty: 3, price: 64 }]
+        deliveredDate: '-',
+        items: [{ name: 'Amul Gold Milk 1L', productId: 'SKU-801', qty: 3, price: 64, image: 'https://placehold.co/40' }],
+        productImage: 'https://placehold.co/40'
     }
 ];
 
 const VendorOrdersPage = () => {
     const [orders, setOrders] = useState(INITIAL_MOCK_ORDERS);
-    const [filters, setFilters] = useState({ search: '', status: '', fromDate: '', toDate: '' });
+    const [filters, setFilters] = useState({ search: '', status: '', paymentStatus: '', fromDate: '', toDate: '' });
     const [selectedRows, setSelectedRows] = useState([]);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [assigningOrder, setAssigningOrder] = useState(null); // Can be a single order object or an array of IDs
@@ -85,7 +105,10 @@ const VendorOrdersPage = () => {
 
             const statusMatch = !filters.status || order.status === filters.status;
 
-            return searchMatch && statusMatch;
+            const paymentMatch = !filters.paymentStatus ||
+                (order.paymentStatus && order.paymentStatus.toLowerCase() === filters.paymentStatus.toLowerCase());
+
+            return searchMatch && statusMatch && paymentMatch;
         });
     }, [orders, filters]);
 
@@ -100,15 +123,20 @@ const VendorOrdersPage = () => {
         const newOrder = {
             id: (1000 + orders.length + 1).toString(),
             customerName: orderData.customerName,
+            customerId: `CUST-${1000 + orders.length + 1}`,
             customerPhone: orderData.customerPhone,
+            customerEmail: 'customer@example.com', // Placeholder
             productsCount: orderData.items.length,
             totalAmount: orderData.finalTotal,
             paymentMethod: orderData.paymentType,
+            paymentStatus: orderData.paymentType === 'Online' ? 'Paid' : 'Pending',
             status: 'Pending',
             assignedRider: null,
             deliveryAddress: orderData.deliveryAddress,
             createdDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-            items: orderData.items
+            deliveredDate: '-',
+            items: orderData.items,
+            productImage: 'https://placehold.co/40'
         };
 
         setOrders([newOrder, ...orders]);
@@ -184,7 +212,8 @@ const VendorOrdersPage = () => {
             <VendorOrderFilters
                 filters={filters}
                 setFilters={setFilters}
-                onClear={() => setFilters({ search: '', status: '', fromDate: '', toDate: '' })}
+                onClear={() => setFilters({ search: '', status: '', paymentStatus: '', fromDate: '', toDate: '' })}
+                onExport={(type) => showToast(`Exporting orders as ${type.toUpperCase()}...`, 'info')}
             />
 
             {/* List */}
