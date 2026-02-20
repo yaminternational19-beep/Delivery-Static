@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Search, ChevronLeft, ChevronRight, User, MousePointer2, Download, Square, CheckSquare, Calendar } from 'lucide-react';
+import { Search, Calendar, ChevronLeft, ChevronRight, User, Terminal, ArrowRight } from 'lucide-react';
+import ExportActions from '../../../components/common/ExportActions';
 
 const AccessLogs = ({ onShowToast }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState({
-        action: 'All Actions',
+        action: '',
         fromDate: '',
         toDate: ''
     });
@@ -35,7 +36,7 @@ const AccessLogs = ({ onShowToast }) => {
         return allLogs.filter(log => {
             const matchesSearch = log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 log.ip.includes(searchQuery);
-            const matchesAction = filter.action === 'All Actions' || log.action.includes(filter.action.replace('s', ''));
+            const matchesAction = !filter.action || log.action === filter.action;
 
             let matchesDate = true;
             if (filter.fromDate) {
@@ -55,158 +56,176 @@ const AccessLogs = ({ onShowToast }) => {
     const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
     const paginatedLogs = filteredLogs.slice((currentPage - 1) * logsPerPage, currentPage * logsPerPage);
 
-    const handleSelectAll = () => {
-        setSelectedLogs(selectedLogs.length === paginatedLogs.length ? [] : paginatedLogs.map(l => l.id));
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setSelectedLogs(paginatedLogs.map(l => l.id));
+        } else {
+            setSelectedLogs([]);
+        }
     };
 
     const handleSelectOne = (id) => {
         setSelectedLogs(prev => prev.includes(id) ? prev.filter(lId => lId !== id) : [...prev, id]);
     };
 
-    const handleExport = () => {
-        const data = selectedLogs.length > 0
-            ? filteredLogs.filter(l => selectedLogs.includes(l.id))
-            : filteredLogs;
-        console.log('Exporting Logs:', data);
-        onShowToast(`Exporting ${data.length} logs to CSV...`, 'success');
-    };
-
     return (
-        <div className="card">
-            <div className="table-header" style={{ flexWrap: 'wrap', gap: '12px', padding: '12px 20px' }}>
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', flex: 1 }}>
-                    <div className="search-bar" style={{ width: '240px' }}>
-                        <Search size={16} />
+        <div className="list-wrapper">
+            {/* Filter Section */}
+            <div className="filter-bar">
+                <div style={{ display: 'flex', gap: '8px', flex: 1, alignItems: 'center' }}>
+                    <div className="filter-search" style={{ flex: '0 1 280px' }}>
+                        <Search className="search-icon" size={18} />
                         <input
                             type="text"
+                            className="search-input"
                             placeholder="Search user or IP..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#f8fafc', padding: '4px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                        <Calendar size={14} color="#64748b" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'white', padding: '0 12px', borderRadius: '10px', border: '1px solid #e2e8f0', height: '42px' }}>
+                        <Calendar size={16} color="#94a3b8" />
                         <input
                             type="date"
-                            className="date-input-minimal"
                             value={filter.fromDate}
                             onChange={(e) => setFilter({ ...filter, fromDate: e.target.value })}
-                            style={{ border: 'none', background: 'transparent', fontSize: '0.85rem', color: '#1e293b', outline: 'none' }}
+                            style={{ border: 'none', background: 'transparent', fontSize: '13px', color: '#1e293b', outline: 'none', width: '110px' }}
                         />
-                        <span style={{ color: '#94a3b8' }}>to</span>
+                        <ArrowRight size={14} color="#cbd5e1" />
                         <input
                             type="date"
-                            className="date-input-minimal"
                             value={filter.toDate}
                             onChange={(e) => setFilter({ ...filter, toDate: e.target.value })}
-                            style={{ border: 'none', background: 'transparent', fontSize: '0.85rem', color: '#1e293b', outline: 'none' }}
+                            style={{ border: 'none', background: 'transparent', fontSize: '13px', color: '#1e293b', outline: 'none', width: '110px' }}
                         />
                     </div>
 
                     <select
                         className="filter-select"
+                        style={{ width: '160px' }}
                         value={filter.action}
                         onChange={(e) => setFilter({ ...filter, action: e.target.value })}
-                        style={{ minWidth: '140px' }}
                     >
-                        <option>All Actions</option>
-                        <option>Login</option>
-                        <option>Update Sub-Admin</option>
-                        <option>Export Data</option>
+                        <option value="">All Actions</option>
+                        <option value="Login">Login</option>
+                        <option value="Update Sub-Admin">Update Sub-Admin</option>
+                        <option value="Export Data">Export Data</option>
                     </select>
                 </div>
 
-                <div className="action-group">
-                    <button className="action-btn primary sm" onClick={handleExport}>
-                        <Download size={16} /> Export Logs
-                    </button>
+                <div className="filter-controls">
+                    <ExportActions
+                        selectedCount={selectedLogs.length}
+                        onExport={onShowToast}
+                    />
                 </div>
             </div>
 
-            <table className="data-table">
-                <thead>
-                    <tr>
-                        <th style={{ width: '40px' }}>
-                            <button className="icon-btn-plain" onClick={handleSelectAll}>
-                                {selectedLogs.length > 0 && selectedLogs.length === paginatedLogs.length ?
-                                    <CheckSquare size={20} color="var(--primary-color)" /> : <Square size={20} />}
-                            </button>
-                        </th>
-                        <th>User</th>
-                        <th>Operation</th>
-                        <th>Details</th>
-                        <th>IP Address</th>
-                        <th>Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {paginatedLogs.map(log => (
-                        <tr key={log.id} className={selectedLogs.includes(log.id) ? 'row-selected' : ''}>
-                            <td>
-                                <button className="icon-btn-plain" onClick={() => handleSelectOne(log.id)}>
-                                    {selectedLogs.includes(log.id) ? <CheckSquare size={20} color="var(--primary-color)" /> : <Square size={20} />}
-                                </button>
-                            </td>
-                            <td>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <User size={16} color="#64748b" />
-                                    </div>
-                                    <strong>{log.user}</strong>
-                                </div>
-                            </td>
-                            <td>
-                                <span className={`badge-action ${log.action.toLowerCase().includes('login') ? 'success' : ''}`}>
-                                    <MousePointer2 size={12} />
-                                    {log.action}
-                                </span>
-                            </td>
-                            <td className="text-secondary" style={{ fontSize: '0.85rem' }}>{log.details}</td>
-                            <td><code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', fontSize: '0.85rem' }}>{log.ip}</code></td>
-                            <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{log.time}</td>
-                        </tr>
-                    ))}
-                    {paginatedLogs.length === 0 && (
+            {/* Table Section */}
+            <div className="table-container">
+                <table className="data-table">
+                    <thead>
                         <tr>
-                            <td colSpan="6" style={{ textAlign: 'center', padding: '60px', color: 'var(--text-secondary)' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
-                                    <Search size={40} color="#cbd5e1" />
-                                    <span>No logs found matching your criteria.</span>
-                                </div>
-                            </td>
+                            <th className="col-checkbox">
+                                <input
+                                    type="checkbox"
+                                    className="checkbox-input"
+                                    checked={paginatedLogs.length > 0 && selectedLogs.length === paginatedLogs.length}
+                                    onChange={handleSelectAll}
+                                />
+                            </th>
+                            <th>Profile</th>
+                            <th>Full Name</th>
+                            <th>Contact</th>
+                            <th>Operation</th>
+                            <th>Details</th>
+                            <th>IP Address</th>
+                            <th>Timestamp</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {paginatedLogs.map(log => (
+                            <tr key={log.id} style={{ background: selectedLogs.includes(log.id) ? '#f8fafc' : 'white' }}>
+                                <td className="col-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        className="checkbox-input"
+                                        checked={selectedLogs.includes(log.id)}
+                                        onChange={() => handleSelectOne(log.id)}
+                                    />
+                                </td>
+                                <td>
+                                    <div className="profile-avatar" style={{ width: '32px', height: '32px', border: '1px solid #e2e8f0' }}>
+                                        <img
+                                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${log.user}`}
+                                            alt={log.user}
+                                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                        />
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style={{ fontWeight: 600, color: '#111827' }}>{log.user}</span>
+                                </td>
+                                <td>
+                                    <span style={{ color: '#64748b', fontSize: '13px' }}>+1 987 654 3210</span>
+                                </td>
+                                <td>
+                                    <span className={`status-badge ${log.action === 'Login' ? 'status-active' : 'status-pending'}`}>
+                                        {log.action}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span style={{ fontSize: '13px', color: '#64748b' }}>{log.details}</span>
+                                </td>
+                                <td>
+                                    <code style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', color: '#475569', border: '1px solid #e2e8f0' }}>
+                                        {log.ip}
+                                    </code>
+                                </td>
+                                <td>
+                                    <span style={{ fontSize: '13px', color: '#64748b' }}>{log.time}</span>
+                                </td>
+                            </tr>
+                        ))}
+                        {paginatedLogs.length === 0 && (
+                            <tr>
+                                <td colSpan="6" className="text-center p-4" style={{ color: '#94a3b8' }}>
+                                    No access logs found matching criteria
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
-            <div className="pagination" style={{ borderTop: '1px solid #f1f5f9', padding: '16px 20px' }}>
-                <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                    Showing {paginatedLogs.length} of {filteredLogs.length} entries
+            {/* Pagination Section */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', padding: '16px 20px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e6eaf0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Showing</span>
+                    <span style={{ padding: '4px 10px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>
+                        {paginatedLogs.length}
+                    </span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>of</span>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>{filteredLogs.length}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>entries</span>
                 </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="btn-group">
                     <button
-                        className="page-btn"
+                        className="btn btn-secondary"
+                        style={{ height: '34px', fontSize: '13px' }}
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(p => p - 1)}
                     >
-                        <ChevronLeft size={18} />
+                        <ChevronLeft size={16} /> Previous
                     </button>
-                    {Array.from({ length: totalPages }, (_, i) => (
-                        <button
-                            key={i + 1}
-                            className={`page-btn ${currentPage === i + 1 ? 'active' : ''}`}
-                            onClick={() => setCurrentPage(i + 1)}
-                        >
-                            {i + 1}
-                        </button>
-                    ))}
                     <button
-                        className="page-btn"
+                        className="btn btn-secondary"
+                        style={{ height: '34px', fontSize: '13px' }}
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage(p => p + 1)}
                     >
-                        <ChevronRight size={18} />
+                        Next <ChevronRight size={16} />
                     </button>
                 </div>
             </div>

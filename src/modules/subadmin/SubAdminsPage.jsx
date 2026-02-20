@@ -20,25 +20,27 @@ const SubAdminsPage = () => {
     const handleSaveSubAdmin = (data) => {
         console.log('Saving Sub-Admin Data:', data);
         setModal({ open: false, type: null, user: null });
-        showToast(data.id ? 'Sub-Admin details updated successfully!' : 'New Sub-Admin created successfully!', 'success');
+        showToast(data.id ? 'Sub-Admin details updated successfully' : 'New Sub-Admin account has been created', 'success');
     };
 
     const handleSavePermissions = (permissions) => {
         console.log('Saving Permissions for sub-admin:', modal.user?.name, permissions);
         setModal({ open: false, type: null, user: null });
-        showToast(`Permissions for ${modal.user?.name} changed successfully!`, 'success');
+        showToast(`Access permissions for ${modal.user?.name} updated`, 'success');
     };
 
     const handleDeactivate = (user) => {
-        showToast(`Sub-Admin ${user.name} has been deactivated.`, 'info');
+        const action = user.status === 'Active' ? 'deactivated' : 'activated';
+        showToast(`Account for ${user.name} has been ${action}`, 'info');
     };
 
     const handleDelete = (user) => {
-        showToast(`Sub-Admin ${user.name} has been removed.`, 'error');
+        showToast(`Sub-Admin ${user.name} removed from system`, 'error');
     };
 
     return (
-        <div className="management-module">
+        <div className="page-wrapper">
+            {/* Toast Notification - Floating at Right Top */}
             {toast.show && (
                 <Toast
                     message={toast.message}
@@ -47,43 +49,46 @@ const SubAdminsPage = () => {
                 />
             )}
 
-            <div className="module-intro" style={{ marginBottom: '16px' }}>
-                <div className="intro-content">
-                    <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 700, color: '#1e293b' }}>Sub-Admin Management</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.95rem', marginTop: '4px' }}>Manage system administrators and their relative permissions</p>
+            {/* Page Header */}
+            <div className="list-header" style={{ marginBottom: '32px' }}>
+                <div>
+                    <h1 className="header-title" style={{ fontSize: '2rem', fontWeight: 800, color: '#1e293b' }}>Sub-Admin Management</h1>
+                    <p className="header-subtitle" style={{ fontSize: '1rem', color: '#64748b' }}>Manage system administrators and their relative permissions</p>
                 </div>
-                <div className="tab-group-pills">
-                    <button
-                        className={activeTab === 'users' ? 'active' : ''}
-                        onClick={() => setActiveTab('users')}
-                    >
-                        Sub-Admins
-                    </button>
-                    <button
-                        className={activeTab === 'logs' ? 'active' : ''}
-                        onClick={() => setActiveTab('logs')}
-                    >
-                        Access Logs
-                    </button>
-                </div>
-            </div>
-
-            <SubAdminStats />
-
-            <div className="section-header-row">
-                <h3>{activeTab === 'users' ? 'Active Sub-Admins' : 'Activity Logs'}</h3>
                 {activeTab === 'users' && (
                     <button
-                        className="action-btn primary"
+                        className="btn btn-primary"
                         onClick={() => setModal({ open: true, type: 'form', user: null })}
-                        style={{ padding: '10px 20px' }}
+                        style={{ height: '44px', padding: '0 24px', fontSize: '15px' }}
                     >
-                        <Users size={18} style={{ marginRight: '8px' }} />
+                        <Users size={20} />
                         Add New Sub-Admin
                     </button>
                 )}
             </div>
 
+            {/* Stats Section */}
+            <SubAdminStats />
+
+            {/* Tabs */}
+            <div className="flex gap-md mb-4" style={{ marginBottom: '24px' }}>
+                <button
+                    className={`btn ${activeTab === 'users' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => setActiveTab('users')}
+                    style={{ padding: '0 24px' }}
+                >
+                    Sub-Admins
+                </button>
+                <button
+                    className={`btn ${activeTab === 'logs' ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => setActiveTab('logs')}
+                    style={{ padding: '0 24px' }}
+                >
+                    Access Logs
+                </button>
+            </div>
+
+            {/* Content Area */}
             {activeTab === 'users' ? (
                 <SubAdminList
                     onEdit={(user) => setModal({ open: true, type: 'form', user })}
@@ -96,6 +101,7 @@ const SubAdminsPage = () => {
                 <AccessLogs onShowToast={showToast} />
             )}
 
+            {/* Modals */}
             {modal.open && modal.type === 'form' && (
                 <SubAdminForm
                     user={modal.user}

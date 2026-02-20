@@ -25,52 +25,75 @@ const SubAdminPermissions = ({ user, onClose, onSave }) => {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-content wide" style={{ height: 'auto', maxHeight: '95vh' }}>
-                <div className="modal-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Shield size={22} color="var(--primary-color)" />
+            <div className="modal-content wide" style={{ height: 'auto', maxHeight: '95vh', maxWidth: '1100px', width: '95%' }}>
+                <div className="modal-header" style={{ padding: '24px 32px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Shield size={28} color="#4f46e5" />
                         </div>
                         <div>
-                            <h3 style={{ margin: 0 }}>Access Permissions</h3>
-                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Configure module access for <strong>{user?.name}</strong></p>
+                            <h3 style={{ margin: 0, fontSize: '1.4rem', color: '#111827', fontWeight: 800 }}>Access Permissions</h3>
+                            <p style={{ margin: 0, fontSize: '0.95rem', color: '#64748b' }}>Configure system module access for <strong>{user?.name}</strong></p>
                         </div>
                     </div>
-                    <button className="icon-btn" onClick={onClose}><X size={20} /></button>
+                    <button className="toast-close" onClick={onClose} style={{ fontSize: '28px', color: '#94a3b8' }}>&times;</button>
                 </div>
 
-                <div className="modal-body" style={{ overflowY: 'visible' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', background: '#f8fafc', padding: '16px', borderRadius: '12px' }}>
+                <div className="modal-body" style={{ padding: '32px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', background: '#f8fafc', padding: '20px 24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                         <div>
-                            <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Modular Access Control</span>
-                            <p className="text-secondary" style={{ fontSize: '0.8rem', margin: '2px 0 0 0' }}>{permissions.length} modules selected for this administrator</p>
+                            <span style={{ fontSize: '1rem', fontWeight: 700, color: '#1e293b' }}>Global Access Control</span>
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '4px 0 0 0' }}>{permissions.length} modules currently granted to this administrator</p>
                         </div>
-                        <button className="action-btn secondary sm" onClick={handleFullAccess}>
-                            {permissions.length === modules.length ? 'Revoke All Access' : 'Grant Full Access'}
+                        <button
+                            className="btn btn-secondary"
+                            style={{ height: '42px', padding: '0 20px', fontSize: '13px', fontWeight: 700 }}
+                            onClick={handleFullAccess}
+                        >
+                            {permissions.length === modules.length ? 'Revoke All Access' : 'Grant Full Management Access'}
                         </button>
                     </div>
 
-                    <div className="permission-grid">
+                    <div className="permission-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '20px' }}>
                         {modules.map(module => (
                             <div
                                 key={module.id}
                                 className={`permission-item ${permissions.includes(module.id) ? 'active' : ''}`}
                                 onClick={() => handleToggle(module.id)}
+                                style={{
+                                    padding: '20px',
+                                    borderRadius: '16px',
+                                    border: permissions.includes(module.id) ? '2px solid #4f46e5' : '1px solid #e2e8f0',
+                                    background: permissions.includes(module.id) ? '#f5f3ff' : 'white',
+                                    transition: 'all 0.2s ease'
+                                }}
                             >
-                                <div className={`checkbox-circle ${permissions.includes(module.id) ? 'checked' : ''}`}>
-                                    {permissions.includes(module.id) && <Check size={14} strokeWidth={3} />}
+                                <div className={`checkbox-circle ${permissions.includes(module.id) ? 'checked' : ''}`} style={{ width: '24px', height: '24px' }}>
+                                    {permissions.includes(module.id) && <Check size={16} strokeWidth={3} />}
                                 </div>
                                 <div className="permission-info">
-                                    <strong style={{ color: permissions.includes(module.id) ? 'var(--primary-color)' : '#1e293b' }}>{module.name}</strong>
-                                    <p>{module.desc}</p>
+                                    <strong style={{ fontSize: '1rem', color: permissions.includes(module.id) ? '#4f46e5' : '#1e293b', transition: 'color 0.2s' }}>{module.name}</strong>
+                                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '4px' }}>{module.desc}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '16px', marginTop: '40px', padding: '24px 0 0 0', borderTop: '1px solid #f1f5f9' }}>
-                        <button className="action-btn secondary" style={{ flex: 1, height: '48px' }} onClick={onClose}>Discard Changes</button>
-                        <button className="action-btn primary" style={{ flex: 2, height: '48px' }} onClick={() => onSave(permissions)}>Update User Permissions</button>
+                    <div style={{ display: 'flex', gap: '16px', marginTop: '40px', padding: '32px 0 0 0', borderTop: '2px solid #f1f5f9' }}>
+                        <button
+                            className="btn btn-secondary"
+                            style={{ flex: 1, height: '52px', fontSize: '15px', fontWeight: 700, borderRadius: '12px' }}
+                            onClick={onClose}
+                        >
+                            Discard Changes
+                        </button>
+                        <button
+                            className="btn btn-primary"
+                            style={{ flex: 2, height: '52px', fontSize: '15px', fontWeight: 700, borderRadius: '12px', background: '#4f46e5', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)' }}
+                            onClick={() => onSave(permissions)}
+                        >
+                            Update System Permissions
+                        </button>
                     </div>
                 </div>
             </div>

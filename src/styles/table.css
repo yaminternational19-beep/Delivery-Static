@@ -1,0 +1,127 @@
+/* Clean Table Styles */
+.table-container {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e6eaf0;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--font-size-sm);
+    text-align: left;
+}
+
+.data-table thead {
+    background-color: #f6f8fb;
+}
+
+.data-table th {
+    padding: 14px 16px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.data-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid #eef1f5;
+}
+
+.data-table td {
+    padding: 14px 16px;
+    color: var(--text-primary);
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f9fafc;
+}
+
+/* Checkbox Column */
+.col-checkbox {
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Action Column */
+.col-actions {
+    width: 140px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Checkbox Styles */
+.checkbox-input {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+/* Status Badge Styles (Soft Pills) */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+}
+
+.status-active,
+.status-approved,
+.status-live {
+    background-color: #ecfdf5;
+    color: #10b981;
+    border-color: #d1fae5;
+}
+
+.status-inactive,
+.status-hidden {
+    background-color: #f8fafc;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
+.status-blocked,
+.status-out-of-stock {
+    background-color: #fef2f2;
+    color: #ef4444;
+    border-color: #fee2e2;
+}
+
+.status-pending {
+    background-color: #fffbeb;
+    color: #f59e0b;
+    border-color: #fef3c7;
+}
+
+.status-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+}

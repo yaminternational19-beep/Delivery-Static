@@ -32,43 +32,48 @@ const Navbar = ({ onMenuClick }) => {
     };
 
     return (
-        <nav className="navbar glass">
-            <div className="navbar-left">
-                <button onClick={onMenuClick} className="icon-btn menu-btn" style={{ display: 'none' }}>
-                    <Menu size={20} />
-                </button>
+        <header className="top-header">
+            <div className="header-left">
+                {/*  Title/Subtitle logic could go here if route dependent, 
+                      but typically Sidebar handles Nav. 
+                      Let's stick to the requested layout: Title Left, Profile Right.
+                  */}
+                {/* <div>
+                    <h2 className="header-title">Dashboard</h2>
+                    <p className="header-subtitle">Overview of your performance</p>
+                </div> */}
             </div>
 
-            <div className="navbar-right">
-                <button className="icon-btn">
+            <div className="header-actions">
+                <button className="btn-icon">
                     <Bell size={20} />
-                    <span className="notification-dot"></span>
                 </button>
 
-                <div className="profile-section" ref={dropdownRef}>
-                    <div className="profile-trigger" onClick={() => setShowDropdown(!showDropdown)}>
-                        <div className="profile-avatar">
-                            <User size={20} />
-                        </div>
-                        <div className="profile-info">
-                            <span className="profile-name">{userName}</span>
-                            <span className="profile-role">{formatRole(userRole)}</span>
-                        </div>
+                <div className="profile-menu" ref={dropdownRef} onClick={() => setShowDropdown(!showDropdown)}>
+                    <div className="profile-avatar">
+                        <User size={20} />
+                    </div>
+                    <div className="profile-info">
+                        <span className="profile-name">{userName}</span>
+                        <span className="profile-role">{formatRole(userRole)}</span>
                     </div>
 
                     {showDropdown && (
-                        <div className="profile-dropdown">
+                        <div className="header-dropdown">
                             <button className="dropdown-item">
-                                <User size={18} /> My Profile
+                                <User size={16} /> My Profile
                             </button>
-                            <button className="dropdown-item logout" onClick={handleLogout}>
-                                <LogOut size={18} /> Logout
+                            <button
+                                className="dropdown-item logout"
+                                onClick={handleLogout}
+                            >
+                                <LogOut size={16} /> Logout
                             </button>
                         </div>
                     )}
                 </div>
             </div>
-        </nav>
+        </header>
     );
 };
 
