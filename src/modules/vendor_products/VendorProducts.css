@@ -71,19 +71,28 @@
 }
 
 .product-filters-container {
-    padding: 16px 20px;
+    padding: 10px 20px;
     background: white;
     border-bottom: 1px solid var(--border-color);
     display: flex;
-    flex-wrap: wrap;
     gap: 12px;
     align-items: center;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+}
+
+.filter-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
 }
 
 .p-search {
     position: relative;
-    flex: 1;
-    min-width: 200px;
+    width: 200px;
+    flex-shrink: 0;
 }
 
 .p-search input {
@@ -112,15 +121,20 @@
 }
 
 .filter-select {
-    padding: 10px 16px;
+    padding: 8px 12px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-primary);
     background-color: #ffffff;
     cursor: pointer;
-    min-width: 130px;
+    min-width: 120px;
     transition: all 0.2s;
+}
+
+.filter-actions {
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
 .filter-select:hover {

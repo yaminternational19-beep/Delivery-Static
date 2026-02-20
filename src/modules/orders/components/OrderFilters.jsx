@@ -1,20 +1,23 @@
 import React from 'react';
 import { Search, Filter, Calendar, X } from 'lucide-react';
+import ExportActions from '../../../components/common/ExportActions';
 
-const OrderFilters = ({ filters, setFilters, onClear }) => {
+const OrderFilters = ({ filters, setFilters, onClear, selectedCount, onExport }) => {
 
     const handleChange = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 
+    const hasActiveFilters = Object.values(filters).some(Boolean);
+
     return (
-        <div className="order-filters-container">
+        <div className="order-filters-container" style={{ minWidth: '1500px' }}>
             {/* Search */}
             <div className="o-search">
                 <Search className="search-icon" size={18} />
                 <input
                     type="text"
-                    placeholder="Search by rider, item, brand, or vendor..."
+                    placeholder="Search by customer, item, brand, or vendor..."
                     value={filters.search}
                     onChange={(e) => handleChange('search', e.target.value)}
                 />
@@ -22,18 +25,19 @@ const OrderFilters = ({ filters, setFilters, onClear }) => {
 
             {/* Filters Group */}
             <div className="filter-group">
-
-                <select
-                    className="filter-select"
-                    value={filters.vendor}
-                    onChange={(e) => handleChange('vendor', e.target.value)}
-                >
-                    <option value="">All Vendors</option>
-                    <option value="Tech Mart">Tech Mart</option>
-                    <option value="Fashion Ave">Fashion Ave</option>
-                    <option value="Global Electronics">Global Electronics</option>
-                </select>
-
+                <div className="input-with-icon">
+                    <Filter size={14} className="field-icon" />
+                    <select
+                        className="filter-select"
+                        value={filters.vendor}
+                        onChange={(e) => handleChange('vendor', e.target.value)}
+                    >
+                        <option value="">All Vendors</option>
+                        <option value="Tech Mart">Tech Mart</option>
+                        <option value="Fashion Ave">Fashion Ave</option>
+                        <option value="Global Electronics">Global Electronics</option>
+                    </select>
+                </div>
 
                 <select
                     className="filter-select"
@@ -59,18 +63,6 @@ const OrderFilters = ({ filters, setFilters, onClear }) => {
 
                 <select
                     className="filter-select"
-                    value={filters.brand}
-                    onChange={(e) => handleChange('brand', e.target.value)}
-                >
-                    <option value="">All Brands</option>
-                    <option value="Samsung">Samsung</option>
-                    <option value="Nike">Nike</option>
-                    <option value="Sony">Sony</option>
-                    <option value="Apple">Apple</option>
-                </select>
-
-                <select
-                    className="filter-select"
                     value={filters.status}
                     onChange={(e) => handleChange('status', e.target.value)}
                 >
@@ -83,33 +75,34 @@ const OrderFilters = ({ filters, setFilters, onClear }) => {
 
                 {/* Date Range */}
                 <div className="date-inputs">
-                    <Calendar size={14} className="text-gray-400" />
+                    <Calendar size={14} color="#94a3b8" />
                     <input
                         type="date"
                         value={filters.fromDate}
                         onChange={(e) => handleChange('fromDate', e.target.value)}
-                        placeholder="From"
                     />
-                    <span style={{ color: '#cbd5e1' }}>-</span>
+                    <span style={{ color: '#cbd5e1' }}>–</span>
                     <input
                         type="date"
                         value={filters.toDate}
                         onChange={(e) => handleChange('toDate', e.target.value)}
-                        placeholder="To"
                     />
                 </div>
 
                 {/* Clear Filters */}
-                {(filters.search || filters.category || filters.vendor || filters.brand || filters.status || filters.fromDate || filters.toDate) && (
+                {hasActiveFilters && (
                     <button
                         onClick={onClear}
-                        className="icon-btn"
+                        className="filter-clear-btn"
                         title="Clear Filters"
-                        style={{ color: '#ef4444', border: '1px solid #fee2e2', background: '#fef2f2' }}
                     >
                         <X size={18} />
                     </button>
                 )}
+            </div>
+
+            <div className="filter-actions" style={{ marginLeft: 'auto' }}>
+                <ExportActions selectedCount={selectedCount} onExport={onExport} />
             </div>
         </div>
     );

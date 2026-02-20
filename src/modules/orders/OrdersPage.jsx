@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Download, FileText, X, Clock, MapPin, CheckCircle } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, X, Clock, MapPin, UserMinus } from 'lucide-react';
 import OrderStats from './components/OrderStats';
 import OrderFilters from './components/OrderFilters';
 import OrderList from './components/OrderList';
@@ -28,6 +28,7 @@ const MOCK_ORDERS = Array.from({ length: 50 }, (_, i) => {
         category: i % 3 === 0 ? 'Electronics' : i % 3 === 1 ? 'Fashion' : 'Accessories',
         subCategory: i % 3 === 0 ? (i % 2 === 0 ? 'Mobile' : 'Laptop') : 'Footwear',
         productName: i % 3 === 0 ? 'Laptop Charger' : i % 3 === 1 ? 'Leather Jacket' : 'Smartphone Case',
+        image: i % 2 === 0 ? 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100&h=100&fit=crop' : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop',
         status: status,
         riderContact: `+1 555-0${100 + i}`,
         riderEmail: `rider${500 + i}@delivery.com`,
@@ -117,14 +118,13 @@ const OrdersPage = () => {
 
     // Update Pagination Stats
     useEffect(() => {
+        const total = filteredOrders.length;
+        const totalPages = Math.ceil(total / pagination.limit);
         setPagination(prev => ({
             ...prev,
-            total: filteredOrders.length,
-            totalPages: Math.ceil(filteredOrders.length / prev.limit)
+            total,
+            totalPages
         }));
-        if (pagination.page > Math.ceil(filteredOrders.length / pagination.limit) && filteredOrders.length > 0) {
-            setPagination(prev => ({ ...prev, page: 1 }));
-        }
     }, [filteredOrders.length, pagination.limit]);
 
     // Handlers
@@ -137,8 +137,8 @@ const OrdersPage = () => {
         if (action === 'view') {
             setSelectedRider(order);
         } else if (action === 'terminate') {
-            if (window.confirm(`Are you sure you want to deactivate account for rider ${order.riderName}?`)) {
-                showToast(`Rider ${order.riderName} account has been deactivated.`, 'error');
+            if (window.confirm(`Are you sure you want to report rider ${order.riderName}?`)) {
+                showToast(`Report filed for rider ${order.riderName}.`, 'error');
             }
         }
     };
@@ -159,11 +159,8 @@ const OrdersPage = () => {
         }
     };
 
-    const handleExport = (format) => {
-        const dataToExport = selectedRows.length > 0
-            ? orders.filter(o => selectedRows.includes(o.id))
-            : filteredOrders;
-        showToast(`Exporting ${dataToExport.length} orders to ${format.toUpperCase()}...`);
+    const handleExport = (message, type = 'info') => {
+        showToast(message, type);
     };
 
     const stats = {
@@ -178,73 +175,73 @@ const OrdersPage = () => {
             {/* Header */}
             <div className="orders-header">
                 <div>
-                    <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Order Management</h1>
+                    <h1 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700, color: 'var(--text-primary)' }}>
+                        Order Management
+                    </h1>
                     <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>
-                        Track deliveries, manage riders, and monitor order stats
+                        Track deliveries, manage riders, and monitor real-time order status
                     </p>
-                </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <button className="action-btn secondary" onClick={() => handleExport('excel')}>
-                        <FileText size={18} /> Export Excel
-                    </button>
-                    <button className="action-btn secondary" onClick={() => handleExport('pdf')}>
-                        <Download size={18} /> Export PDF
-                    </button>
                 </div>
             </div>
 
             {/* Stats */}
             <OrderStats stats={stats} />
 
-            {/* Filter Bar */}
-            <OrderFilters
-                filters={filters}
-                setFilters={setFilters}
-                onClear={() => setFilters({
-                    search: '', brand: '', vendor: '', category: '', subCategory: '', status: '', fromDate: '', toDate: ''
-                })}
-            />
-
-            {/* Order List Table */}
-            {loading ? (
-                <div style={{ padding: '40px', textAlign: 'center' }}>Loading orders...</div>
-            ) : (
-                <>
-                    <OrderList
-                        orders={paginatedData}
-                        selectedRows={selectedRows}
-                        onAction={handleAction}
-                        onSelectRow={handleSelectRow}
-                        onSelectAll={handleSelectAll}
+            {/* Unified Table Section */}
+            <div className="orders-table-section">
+                <div className="orders-data-wrapper">
+                    <OrderFilters
+                        filters={filters}
+                        setFilters={setFilters}
+                        selectedCount={selectedRows.length}
+                        onExport={handleExport}
+                        onClear={() => setFilters({
+                            search: '', brand: '', vendor: '', category: '', subCategory: '', status: '', fromDate: '', toDate: ''
+                        })}
                     />
 
-                    {/* Pagination */}
-                    <div style={{ padding: '16px 20px', background: 'white', border: '1px solid var(--border-color)', borderTop: 'none', borderRadius: '0 0 12px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                            Showing {Math.min((pagination.page - 1) * pagination.limit + 1, pagination.total)} - {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} orders
-                        </span>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <button
-                                className="mini-btn secondary"
-                                disabled={pagination.page === 1}
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                            >
-                                Previous
-                            </button>
-                            <span style={{ display: 'flex', alignItems: 'center', padding: '0 8px', fontSize: '0.9rem', fontWeight: 500 }}>
-                                Page {pagination.page} of {pagination.totalPages || 1}
-                            </span>
-                            <button
-                                className="mini-btn secondary"
-                                disabled={pagination.page === pagination.totalPages || pagination.totalPages === 0}
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                            >
-                                Next
-                            </button>
+                    {loading ? (
+                        <div style={{ padding: '80px', textAlign: 'center', color: '#64748b' }}>
+                            <div className="loading-spinner"></div>
+                            <p style={{ marginTop: '16px' }}>Fetching latest orders...</p>
                         </div>
+                    ) : (
+                        <OrderList
+                            orders={paginatedData}
+                            selectedRows={selectedRows}
+                            onAction={handleAction}
+                            onSelectRow={handleSelectRow}
+                            onSelectAll={handleSelectAll}
+                        />
+                    )}
+                </div>
+
+                {/* Unified Pagination */}
+                <div className="c-pagination" style={{ borderTop: '1px solid var(--border-color)', background: '#f8fafc' }}>
+                    <span className="c-pagination-info">
+                        Showing {Math.min((pagination.page - 1) * pagination.limit + 1, pagination.total)} – {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} orders
+                    </span>
+                    <div className="c-pagination-btns" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                            className="c-page-btn"
+                            disabled={pagination.page === 1}
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                        >
+                            <ChevronLeft size={14} /> Prev
+                        </button>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', padding: '0 4px' }}>
+                            {pagination.page} / {pagination.totalPages || 1}
+                        </span>
+                        <button
+                            className="c-page-btn"
+                            disabled={pagination.page === pagination.totalPages || pagination.totalPages === 0}
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                        >
+                            Next <ChevronRight size={14} />
+                        </button>
                     </div>
-                </>
-            )}
+                </div>
+            </div>
 
             {/* Rider Dashboard Modal */}
             {selectedRider && (
@@ -254,20 +251,20 @@ const OrdersPage = () => {
                             <X size={24} />
                         </button>
 
-                        <div className="rider-dash-header" style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '20px', marginBottom: '24px' }}>
+                        <div className="rider-dash-header">
                             <div className="rider-profile-info">
-                                <div className="rider-avatar" style={{ background: 'var(--primary-color)' }}>
+                                <div className="rider-avatar-main" style={{ background: 'var(--primary-color)' }}>
                                     {selectedRider.customerName.charAt(0)}
                                 </div>
                                 <div>
-                                    <h2 style={{ margin: 0 }}>Customer: {selectedRider.customerName}</h2>
-                                    <p style={{ color: '#64748b', margin: '4px 0' }}>{selectedRider.customerId} | {selectedRider.customerEmail}</p>
-                                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--primary-color)' }}>Contact: {selectedRider.customerPhone}</span>
+                                    <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Customer: {selectedRider.customerName}</h2>
+                                    <p style={{ color: '#64748b', margin: '4px 0', fontSize: '0.9rem' }}>{selectedRider.customerId} | {selectedRider.customerEmail}</p>
+                                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary-color)' }}>Contact: {selectedRider.customerPhone}</span>
                                 </div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
-                                <p style={{ margin: 0, fontWeight: 600, color: '#64748b' }}>Order Status</p>
-                                <span className={`status-badge ${selectedRider.status.toLowerCase().replace(/\s+/g, '-')}`} style={{ margin: '8px 0', fontSize: '1rem', padding: '6px 16px' }}>
+                                <p style={{ margin: 0, fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>Order Status</p>
+                                <span className={`status-badge ${selectedRider.status.toLowerCase().replace(/\s+/g, '-')}`} style={{ marginTop: '8px', fontSize: '0.9rem', padding: '6px 16px', borderRadius: '10px' }}>
                                     {selectedRider.status}
                                 </span>
                             </div>
@@ -276,94 +273,84 @@ const OrdersPage = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '32px' }}>
                             {/* Left Column: Customer Order Items */}
                             <div className="order-items-section">
-                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                                <h3 className="modal-section-title">
                                     <Clock size={20} color="var(--primary-color)" /> Order Products
                                 </h3>
-                                <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '16px' }}>
-                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
+                                    <table className="order-items-table">
                                         <thead>
-                                            <tr style={{ borderBottom: '1px solid #e2e8f0', textAlign: 'left' }}>
-                                                <th style={{ padding: '8px', fontSize: '0.75rem', color: '#64748b' }}>PRODUCT NAME</th>
-                                                <th style={{ padding: '8px', fontSize: '0.75rem', color: '#64748b', textAlign: 'center' }}>QTY</th>
-                                                <th style={{ padding: '8px', fontSize: '0.75rem', color: '#64748b', textAlign: 'right' }}>PRICE</th>
+                                            <tr>
+                                                <th>PRODUCT NAME</th>
+                                                <th style={{ textAlign: 'center' }}>QTY</th>
+                                                <th style={{ textAlign: 'right' }}>PRICE</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {selectedRider.orderItems.map((item, idx) => (
-                                                <tr key={idx} style={{ borderBottom: idx === selectedRider.orderItems.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
-                                                    <td style={{ padding: '12px 8px', fontSize: '0.85rem', fontWeight: 600 }}>{item.name}</td>
-                                                    <td style={{ padding: '12px 8px', fontSize: '0.85rem', textAlign: 'center' }}>{item.qty}</td>
-                                                    <td style={{ padding: '12px 8px', fontSize: '0.85rem', textAlign: 'right', color: 'var(--primary-color)' }}>{item.price}</td>
+                                                <tr key={idx}>
+                                                    <td style={{ fontWeight: 600 }}>{item.name}</td>
+                                                    <td style={{ textAlign: 'center' }}>{item.qty}</td>
+                                                    <td style={{ textAlign: 'right', color: 'var(--primary-color)', fontWeight: 700 }}>{item.price}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
-                                    <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '2px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
-                                        <span>Total Amount Paid</span>
-                                        <span style={{ color: 'var(--primary-color)' }}>$50.00</span>
+                                    <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '2px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
+                                        <span style={{ color: '#64748b' }}>Total Amount Paid</span>
+                                        <span style={{ color: 'var(--primary-color)', fontSize: '1.2rem' }}>$50.00</span>
                                     </div>
-                                </div>
-                                <div style={{ marginTop: '24px', padding: '16px', background: '#ecfdf5', borderRadius: '12px', border: '1px solid #10b981' }}>
-                                    <h4 style={{ margin: '0 0 8px 0', color: '#065f46', fontSize: '0.9rem' }}>Delivery Address</h4>
-                                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#047857' }}>Suite 405, 5th Avenue, New York, NY 10001</p>
                                 </div>
                             </div>
 
                             {/* Right Column: Rider Details */}
                             <div className="rider-details-section">
-                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                                    <MapPin size={20} color="#f59e0b" /> assigned Rider Details
+                                <h3 className="modal-section-title">
+                                    <MapPin size={20} color="#f59e0b" /> Assigned Rider Details
                                 </h3>
-                                <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px' }}>
+                                <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px' }}>
                                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '20px' }}>
-                                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem' }}>
+                                        <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: '#f59e0b', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.4rem' }}>
                                             {selectedRider.riderName.charAt(0)}
                                         </div>
                                         <div>
-                                            <p style={{ margin: 0, fontWeight: 700 }}>{selectedRider.riderName}</p>
-                                            <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>{selectedRider.riderId}</p>
+                                            <p style={{ margin: 0, fontWeight: 700, fontSize: '1.1rem' }}>{selectedRider.riderName}</p>
+                                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>{selectedRider.riderId}</p>
                                         </div>
                                     </div>
 
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                                             <span style={{ color: '#64748b' }}>Phone</span>
                                             <span style={{ fontWeight: 600 }}>{selectedRider.riderContact}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                                             <span style={{ color: '#64748b' }}>Email</span>
                                             <span style={{ fontWeight: 600 }}>{selectedRider.riderEmail}</span>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                                            <span style={{ color: '#64748b' }}>Performance Score</span>
-                                            <span style={{ fontWeight: 600, color: '#10b981' }}>{selectedRider.riderStats.successRate}</span>
-                                        </div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                                            <span style={{ color: '#64748b' }}>Avg. Delivery Time</span>
-                                            <span style={{ fontWeight: 600 }}>{selectedRider.riderStats.avgTimePerOrder}</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                                            <span style={{ color: '#64748b' }}>Success Rate</span>
+                                            <span style={{ fontWeight: 700, color: '#10b981' }}>{selectedRider.riderStats.successRate}</span>
                                         </div>
                                     </div>
 
-                                    <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #f1f5f9' }}>
-                                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '12px' }}>Rider History</div>
+                                    <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #f1f5f9' }}>
                                         <div className="rider-stat-mini" style={{ display: 'flex', justifyContent: 'space-around' }}>
                                             <div style={{ textAlign: 'center' }}>
-                                                <div style={{ fontSize: '1.2rem', fontWeight: 700 }}>{selectedRider.riderStats.totalOrders}</div>
-                                                <div style={{ fontSize: '0.65rem', color: '#64748b' }}>TOTAL TRIPS</div>
+                                                <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>{selectedRider.riderStats.totalOrders}</div>
+                                                <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600, letterSpacing: '0.05em' }}>TRIPS</div>
                                             </div>
                                             <div style={{ textAlign: 'center' }}>
-                                                <div style={{ fontSize: '1.2rem', fontWeight: 700 }}>{selectedRider.riderStats.activeSince}</div>
-                                                <div style={{ fontSize: '0.65rem', color: '#64748b' }}>ON BOARD</div>
+                                                <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>{selectedRider.riderStats.activeSince}</div>
+                                                <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600, letterSpacing: '0.05em' }}>TENURE</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <button
-                                    className="action-btn"
-                                    style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fee2e2', width: '100%', marginTop: '24px', fontSize: '0.8rem' }}
+                                    className="modal-footer-btn btn-report"
                                     onClick={() => handleAction('terminate', selectedRider)}
                                 >
-                                    Report / Deactivate assigned Rider
+                                    <UserMinus size={18} /> Report / Deactivate Assigned Rider
                                 </button>
                             </div>
                         </div>
