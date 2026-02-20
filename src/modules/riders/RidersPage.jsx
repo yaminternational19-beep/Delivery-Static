@@ -66,25 +66,31 @@ const RidersPage = () => {
     };
 
     const handleApprove = (rider) => {
-        setRiders(riders.map(r => r.id === rider.id ? { ...r, kycStatus: 'Verified', kycReason: '' } : r));
+        setRiders(riders.map(r => r.id === rider.id ? { ...r, kycStatus: 'Verified' } : r));
         setIsKycModalOpen(false);
-        showToast(`Rider ${rider.name} has been successfully verified!`, 'success');
+        showToast(`Rider ${rider.name} verified successfully!`, 'success');
     };
 
     const handleReject = (rider, reason) => {
-        setRiders(riders.map(r => r.id === rider.id ? { ...r, kycStatus: 'Rejected', kycReason: reason || 'Documents not clear' } : r));
+        setRiders(riders.map(r => r.id === rider.id ? { ...r, kycStatus: 'Rejected' } : r));
         setIsKycModalOpen(false);
-        showToast(`Rider ${rider.name} documents rejected. Re-upload requested.`, 'error');
+        showToast(`KYC rejected for ${rider.name}.`, 'error');
     };
 
     const handleTerminate = (id) => {
         setRiders(riders.map(r => r.id === id ? { ...r, riderStatus: 'Terminated' } : r));
-        showToast(`Rider with ID ${id} has been terminated from the platform.`, 'error');
+        showToast(`Rider terminated.`, 'error');
     };
 
-    const handleActivate = (id) => {
-        setRiders(riders.map(r => r.id === id ? { ...r, riderStatus: 'Active' } : r));
-        showToast(`Rider with ID ${id} has been activated successfully.`, 'success');
+    const handleToggleStatus = (id) => {
+        setRiders(riders.map(r => {
+            if (r.id === id) {
+                const newStatus = r.riderStatus === 'Active' ? 'Inactive' : 'Active';
+                showToast(`Rider is now ${newStatus}`, 'info');
+                return { ...r, riderStatus: newStatus };
+            }
+            return r;
+        }));
     };
 
     const handleView = (rider) => {
@@ -120,34 +126,34 @@ const RidersPage = () => {
     };
 
     return (
-        <div className="riders-module">
-            <div className="riders-header">
+        <div className="riders-module management-module">
+            <header className="riders-header">
                 <div>
-                    <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Rider Management</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>
-                        Onboard delivery heroes and verify KYC documents
-                    </p>
+                    <h1>Rider Management</h1>
+                    <p>Onboard delivery heroes and verify KYC documents</p>
                 </div>
-            </div>
+            </header>
 
             <RiderStats stats={stats} />
 
-            <RiderList
-                riders={paginatedRiders}
-                totalCount={filteredRiders.length}
-                filters={filters}
-                setFilters={handleFilterChange}
-                pagination={pagination}
-                setPagination={setPagination}
-                locationData={LOCATION_DATA}
-                selectedRiderIds={selectedRiderIds}
-                setSelectedRiderIds={setSelectedRiderIds}
-                onVerify={handleVerify}
-                onView={handleView}
-                onTerminate={handleTerminate}
-                onActivate={handleActivate}
-                showToast={showToast}
-            />
+            <div style={{ marginTop: '24px' }}>
+                <RiderList
+                    riders={paginatedRiders}
+                    totalCount={filteredRiders.length}
+                    filters={filters}
+                    setFilters={handleFilterChange}
+                    pagination={pagination}
+                    setPagination={setPagination}
+                    locationData={LOCATION_DATA}
+                    selectedRiderIds={selectedRiderIds}
+                    setSelectedRiderIds={setSelectedRiderIds}
+                    onVerify={handleVerify}
+                    onView={handleView}
+                    onTerminate={handleTerminate}
+                    onActivate={handleToggleStatus}
+                    showToast={showToast}
+                />
+            </div>
 
             {isKycModalOpen && (
                 <RiderKYC

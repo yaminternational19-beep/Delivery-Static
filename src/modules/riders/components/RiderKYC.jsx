@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, AlertOctagon, FileText, Download } from 'lucide-react';
+import { X, CheckCircle, AlertOctagon, FileText, Download, Hash, User, Mail, Phone, Bike, MapPin } from 'lucide-react';
 
 const RiderKYC = ({ rider, onClose, onApprove, onReject }) => {
     const [rejectionReason, setRejectionReason] = useState('');
@@ -8,100 +8,126 @@ const RiderKYC = ({ rider, onClose, onApprove, onReject }) => {
     return (
         <div className="kyc-modal-overlay">
             <div className="kyc-modal-content">
-                <div className="kyc-header">
+                <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white' }}>
                     <div>
-                        <h2 style={{ margin: 0 }}>KYC Document Verification</h2>
+                        <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)', fontWeight: 700 }}>KYC Document Verification</h2>
                         <p style={{ margin: '4px 0 0 0', color: '#64748b', fontSize: '0.9rem' }}>
-                            Reviewing documents for <strong>{rider.name}</strong> ({rider.id})
+                            Reviewing documents for <strong style={{ color: 'var(--primary-color)' }}>{rider.name}</strong> ({rider.id})
                         </p>
                     </div>
-                    <button className="icon-btn" onClick={onClose}><X size={24} /></button>
+                    <button className="icon-btn-sm" onClick={onClose} style={{ width: '40px', height: '40px' }}><X size={24} /></button>
                 </div>
 
-                <div className="kyc-body">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '40px' }}>
+                <div className="kyc-body" style={{ background: '#fafbfc' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) 2fr', gap: '40px' }}>
                         {/* Personal Details */}
                         <div>
-                            <h4 style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '20px' }}>Personal Summary</h4>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <h3 className="section-title"><User size={16} /> Personal Summary</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: 'white', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
                                 <div>
-                                    <label style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>Full Name</label>
-                                    <div style={{ fontWeight: 600 }}>{rider.name}</div>
+                                    <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px' }}>Full Name</label>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <User size={14} color="var(--primary-color)" /> {rider.name}
+                                    </div>
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>Email Address</label>
-                                    <div style={{ fontWeight: 600 }}>{rider.email}</div>
+                                    <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px' }}>Email Address</label>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Mail size={14} color="var(--primary-color)" /> {rider.email}
+                                    </div>
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>Phone Number</label>
-                                    <div style={{ fontWeight: 600 }}>{rider.phone}</div>
+                                    <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px' }}>Phone Number</label>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Phone size={14} color="var(--primary-color)" /> {rider.phone}
+                                    </div>
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>Vehicle Type</label>
-                                    <div style={{ fontWeight: 600 }}>{rider.vehicle || 'Motorcycle'}</div>
+                                    <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px' }}>Vehicle Type</label>
+                                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Bike size={14} color="var(--primary-color)" /> {rider.vehicle || 'Motorcycle'}
+                                    </div>
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>Living Address</label>
-                                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Sector 45, DLF Phase 1, Gurgaon, HR - 122002</div>
+                                    <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.5px' }}>Living Address</label>
+                                    <div style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-primary)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <MapPin size={14} color="var(--primary-color)" /> Sector 45, DLF Phase 1, Gurgaon, HR
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Documents */}
                         <div>
-                            <h4 style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '20px' }}>Uploaded Documents</h4>
+                            <h3 className="section-title"><FileText size={16} /> Uploaded Documents</h3>
                             <div className="kyc-document-grid">
                                 <div className="kyc-doc-card">
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Driver's License (Front)</span>
-                                        <button className="icon-btn sm"><Download size={14} /></button>
+                                        <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Driver's License (Front)</span>
+                                        <button className="icon-btn-sm" style={{ width: '32px', height: '32px' }}><Download size={14} /></button>
                                     </div>
                                     <div className="kyc-doc-image">
-                                        <FileText size={40} />
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                            <FileText size={40} color="#cbd5e1" />
+                                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Preview not available</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="kyc-doc-card">
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Driver's License (Back)</span>
-                                        <button className="icon-btn sm"><Download size={14} /></button>
+                                        <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Driver's License (Back)</span>
+                                        <button className="icon-btn-sm" style={{ width: '32px', height: '32px' }}><Download size={14} /></button>
                                     </div>
                                     <div className="kyc-doc-image">
-                                        <FileText size={40} />
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                            <FileText size={40} color="#cbd5e1" />
+                                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Preview not available</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="kyc-doc-card">
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Identity Proof (Adhaar/ID)</span>
-                                        <button className="icon-btn sm"><Download size={14} /></button>
+                                        <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Identity Proof (Adhaar/ID)</span>
+                                        <button className="icon-btn-sm" style={{ width: '32px', height: '32px' }}><Download size={14} /></button>
                                     </div>
                                     <div className="kyc-doc-image">
-                                        <FileText size={40} />
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                            <FileText size={40} color="#cbd5e1" />
+                                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Preview not available</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="kyc-doc-card">
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Vehicle RC</span>
-                                        <button className="icon-btn sm"><Download size={14} /></button>
+                                        <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>Vehicle RC</span>
+                                        <button className="icon-btn-sm" style={{ width: '32px', height: '32px' }}><Download size={14} /></button>
                                     </div>
                                     <div className="kyc-doc-image">
-                                        <FileText size={40} />
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                                            <FileText size={40} color="#cbd5e1" />
+                                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Preview not available</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div style={{ marginTop: '30px' }}>
-                        <h4 style={{ marginBottom: '10px' }}>Rejection Reason (Optional)</h4>
+                    <div style={{ marginTop: '40px', background: 'white', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+                        <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>Rejection Reason (Optional)</h4>
                         <textarea
                             placeholder="Type the reason for rejection here... (e.g., Blur documents, invalid ID)"
                             style={{
                                 width: '100%',
-                                padding: '12px',
+                                padding: '16px',
                                 borderRadius: '12px',
-                                border: '1px solid #e2e8f0',
-                                minHeight: '80px',
-                                fontSize: '0.9rem'
+                                border: '1px solid var(--border-color)',
+                                minHeight: '100px',
+                                fontSize: '0.9rem',
+                                outline: 'none',
+                                background: '#f8fafc',
+                                transition: 'all 0.2s',
+                                resize: 'vertical'
                             }}
                             value={rejectionReason}
                             onChange={(e) => setRejectionReason(e.target.value)}
@@ -109,24 +135,24 @@ const RiderKYC = ({ rider, onClose, onApprove, onReject }) => {
                     </div>
 
                     <div style={{
-                        marginTop: '40px', paddingTop: '30px', borderTop: '1px solid #e2e8f0',
-                        display: 'flex', gap: '20px', justifyContent: 'flex-end'
+                        marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--border-color)',
+                        display: 'flex', gap: '16px', justifyContent: 'flex-end'
                     }}>
                         <button
-                            className="action-btn secondary"
-                            style={{ padding: '12px 30px' }}
+                            className="btn btn-secondary"
+                            style={{ color: '#ef4444', borderColor: '#fee2e2' }}
                             onClick={() => onReject(rider, rejectionReason)}
                         >
-                            <AlertOctagon size={20} style={{ marginRight: '8px' }} />
-                            Reject - Request Re-upload
+                            <AlertOctagon size={18} />
+                            Reject KYC
                         </button>
                         <button
-                            className="action-btn primary"
-                            style={{ padding: '12px 40px', background: '#10b981' }}
+                            className="btn btn-primary"
+                            style={{ background: '#10b981', border: 'none' }}
                             onClick={() => onApprove(rider)}
                         >
-                            <CheckCircle size={20} style={{ marginRight: '8px' }} />
-                            Approve & Verify Rider
+                            <CheckCircle size={18} />
+                            Approve & Verify
                         </button>
                     </div>
                 </div>

@@ -1,55 +1,69 @@
 import React from 'react';
-import { Truck, ShieldCheck, Clock, AlertCircle } from 'lucide-react';
+import { Truck, ShieldCheck, Clock, AlertCircle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 const RiderStats = ({ stats }) => {
     const statCards = [
         {
             title: 'Total Riders',
             value: stats.total,
+            trend: '+4%',
             icon: Truck,
             color: '#6366f1',
-            bg: '#eef2ff',
-            desc: 'Registered fleet size'
+            desc: 'Registered fleet'
         },
         {
             title: 'Verified Riders',
             value: stats.verified,
+            trend: '+12%',
             icon: ShieldCheck,
             color: '#10b981',
-            bg: '#ecfdf5',
             desc: 'KYC approved'
         },
         {
             title: 'Pending KYC',
             value: stats.pending,
+            trend: '+2',
             icon: Clock,
             color: '#f59e0b',
-            bg: '#fffbeb',
-            desc: 'Waiting for verification'
+            desc: 'In review'
         },
         {
             title: 'Rejected/Issues',
             value: stats.rejected,
+            trend: '-1',
             icon: AlertCircle,
             color: '#ef4444',
-            bg: '#fef2f2',
-            desc: 'Requires attention'
+            desc: 'Action required'
         }
     ];
 
     return (
-        <div className="rider-stats-grid">
+        <div className="rider-stats-panel">
             {statCards.map((card, idx) => {
                 const Icon = card.icon;
                 return (
-                    <div key={idx} className="rider-stat-card">
-                        <div className="rider-stat-icon" style={{ background: card.bg }}>
-                            <Icon size={28} color={card.color} />
+                    <div key={idx} className="stat-rider-card">
+                        <div className="stat-rider-icon" style={{ background: `${card.color}15`, color: card.color }}>
+                            <Icon size={24} />
                         </div>
-                        <div className="rider-stat-info">
-                            <h3>{card.value}</h3>
+                        <div className="stat-rider-info">
                             <p>{card.title}</p>
-                            <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{card.desc}</span>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                                <h3>{card.value}</h3>
+                                {card.trend && (
+                                    <span style={{
+                                        fontSize: '0.75rem',
+                                        fontWeight: 700,
+                                        color: card.trend.startsWith('+') ? '#10b981' : '#ef4444',
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }}>
+                                        {card.trend}
+                                        {card.trend.startsWith('+') ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                                    </span>
+                                )}
+                            </div>
+                            <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>{card.desc}</p>
                         </div>
                     </div>
                 );

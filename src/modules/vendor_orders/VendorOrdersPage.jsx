@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Plus, Download, FileText, LayoutGrid, List } from 'lucide-react';
+import { Plus, Download, FileText, LayoutGrid, List, UserCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import VendorOrderStats from './components/VendorOrderStats';
 import VendorOrderFilters from './components/VendorOrderFilters';
 import VendorOrderList from './components/VendorOrderList';
@@ -89,8 +89,13 @@ const VendorOrdersPage = () => {
     const [filters, setFilters] = useState({ search: '', status: '', paymentStatus: '', fromDate: '', toDate: '' });
     const [selectedRows, setSelectedRows] = useState([]);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [assigningOrder, setAssigningOrder] = useState(null); // Can be a single order object or an array of IDs
+    const [assigningOrder, setAssigningOrder] = useState(null);
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10
+    });
 
     const showToast = (message, type = 'success') => {
         setToast({ show: true, message, type });
@@ -112,6 +117,13 @@ const VendorOrdersPage = () => {
         });
     }, [orders, filters]);
 
+    const paginatedData = useMemo(() => {
+        const start = (pagination.page - 1) * pagination.limit;
+        return filteredOrders.slice(start, start + pagination.limit);
+    }, [filteredOrders, pagination]);
+
+    const totalPages = Math.ceil(filteredOrders.length / pagination.limit);
+
     const stats = {
         total: orders.length,
         pending: orders.filter(o => o.status === 'Pending').length,
@@ -125,7 +137,7 @@ const VendorOrdersPage = () => {
             customerName: orderData.customerName,
             customerId: `CUST-${1000 + orders.length + 1}`,
             customerPhone: orderData.customerPhone,
-            customerEmail: 'customer@example.com', // Placeholder
+            customerEmail: 'customer@example.com',
             productsCount: orderData.items.length,
             totalAmount: orderData.finalTotal,
             paymentMethod: orderData.paymentType,
@@ -184,22 +196,24 @@ const VendorOrdersPage = () => {
             {/* Header */}
             <div className="orders-header">
                 <div>
-                    <h1 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 800, color: '#0f172a' }}>Order Dispatch</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px', fontWeight: 500 }}>
+                    <h1 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700, color: 'var(--text-primary)' }}>
+                        Order Dispatch
+                    </h1>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>
                         {stats.pending} new orders waiting for rider assignment
                     </p>
                 </div>
                 <div style={{ display: 'flex', gap: '12px' }}>
                     {selectedRows.length > 0 && (
                         <button
-                            className="action-btn primary"
+                            className="btn btn-primary"
                             onClick={handleBulkAssign}
-                            style={{ background: '#f59e0b' }}
+                            style={{ background: '#f59e0b', borderColor: '#f59e0b' }}
                         >
                             <UserCheck size={18} /> Assign Selection ({selectedRows.length})
                         </button>
                     )}
-                    <button className="action-btn secondary" onClick={() => setIsCreateModalOpen(true)}>
+                    <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
                         <Plus size={18} /> New Manual Order
                     </button>
                 </div>
@@ -208,32 +222,49 @@ const VendorOrdersPage = () => {
             {/* Stats Summary */}
             <VendorOrderStats stats={stats} />
 
-            {/* Filters */}
-            <VendorOrderFilters
-                filters={filters}
-                setFilters={setFilters}
-                onClear={() => setFilters({ search: '', status: '', paymentStatus: '', fromDate: '', toDate: '' })}
-                onExport={(type) => showToast(`Exporting orders as ${type.toUpperCase()}...`, 'info')}
-            />
+            {/* Unified Table Section */}
+            <div className="vendor-orders-table-section">
+                <VendorOrderFilters
+                    filters={filters}
+                    setFilters={setFilters}
+                    onClear={() => setFilters({ search: '', status: '', paymentStatus: '', fromDate: '', toDate: '' })}
+                    onExport={(type) => showToast(`Exporting orders as ${type.toUpperCase()}...`, 'info')}
+                    selectedCount={selectedRows.length}
+                />
 
-            {/* List */}
-            <VendorOrderList
-                orders={filteredOrders}
-                selectedRows={selectedRows}
-                onSelectRow={(id, checked) => checked ? setSelectedRows([...selectedRows, id]) : setSelectedRows(selectedRows.filter(r => r !== id))}
-                onSelectAll={(checked) => setSelectedRows(checked ? filteredOrders.map(o => o.id) : [])}
-                onView={(order) => showToast(`Viewing details for #${order.id}`, 'info')}
-                onAssignRider={setAssigningOrder}
-            />
+                <VendorOrderList
+                    orders={paginatedData}
+                    selectedRows={selectedRows}
+                    onSelectRow={(id, checked) => checked ? setSelectedRows([...selectedRows, id]) : setSelectedRows(selectedRows.filter(r => r !== id))}
+                    onSelectAll={(checked) => setSelectedRows(checked ? paginatedData.map(o => o.id) : [])}
+                    onView={(order) => showToast(`Viewing details for #${order.id}`, 'info')}
+                    onAssignRider={setAssigningOrder}
+                />
 
-            {/* Pagination Placeholder */}
-            <div style={{ padding: '16px 24px', background: 'white', border: '1px solid #e2e8f0', borderTop: 'none', borderRadius: '0 0 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-                    Showing {filteredOrders.length} of {filteredOrders.length} orders
-                </span>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="action-btn secondary" disabled style={{ padding: '6px 16px', fontSize: '0.8rem' }}>Previous</button>
-                    <button className="action-btn secondary" disabled style={{ padding: '6px 16px', fontSize: '0.8rem' }}>Next</button>
+                {/* Pagination */}
+                <div className="c-pagination" style={{ borderTop: '1px solid var(--border-color)', background: '#f8fafc' }}>
+                    <span className="c-pagination-info">
+                        Showing {Math.min((pagination.page - 1) * pagination.limit + 1, filteredOrders.length)}–{Math.min(pagination.page * pagination.limit, filteredOrders.length)} of {filteredOrders.length} orders
+                    </span>
+                    <div className="c-pagination-btns" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                            className="c-page-btn"
+                            disabled={pagination.page === 1}
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                        >
+                            <ChevronLeft size={14} /> Prev
+                        </button>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', padding: '0 4px' }}>
+                            {pagination.page} / {totalPages || 1}
+                        </span>
+                        <button
+                            className="c-page-btn"
+                            disabled={pagination.page === totalPages || totalPages === 0}
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                        >
+                            Next <ChevronRight size={14} />
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -265,3 +296,4 @@ const VendorOrdersPage = () => {
 };
 
 export default VendorOrdersPage;
+

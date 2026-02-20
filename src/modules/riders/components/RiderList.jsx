@@ -1,5 +1,7 @@
 import React from 'react';
-import { Search, Eye, ShieldCheck, MapPin, Download, FileText, UserX, RefreshCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, MapPin, ChevronLeft, ChevronRight, X, Shield, UserX, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import ActionButtons from '../../../components/common/ActionButtons';
+import ExportActions from '../../../components/common/ExportActions';
 
 const RiderList = ({
     riders,
@@ -17,21 +19,17 @@ const RiderList = ({
     onActivate,
     showToast
 }) => {
-
     const { currentPage, itemsPerPage } = pagination;
     const totalPages = Math.ceil(totalCount / itemsPerPage);
 
     const handleFilterChange = (key, value) => {
         const newFilters = { ...filters, [key]: value };
-
-        // Interrelated logic
         if (key === 'country') {
             newFilters.state = 'All';
             newFilters.city = 'All';
         } else if (key === 'state') {
             newFilters.city = 'All';
         }
-
         setFilters(newFilters);
     };
 
@@ -46,15 +44,15 @@ const RiderList = ({
         showToast('Filters cleared', 'info');
     };
 
-    const handleSelectAll = (e) => {
-        if (e.target.checked) {
-            setSelectedRiderIds(riders.map(r => r.id));
-        } else {
+    const toggleSelectAll = () => {
+        if (selectedRiderIds.length === riders.length && riders.length > 0) {
             setSelectedRiderIds([]);
+        } else {
+            setSelectedRiderIds(riders.map(r => r.id));
         }
     };
 
-    const handleSelectOne = (id) => {
+    const toggleSelectRow = (id) => {
         if (selectedRiderIds.includes(id)) {
             setSelectedRiderIds(selectedRiderIds.filter(item => item !== id));
         } else {
@@ -62,36 +60,40 @@ const RiderList = ({
         }
     };
 
-    const handleActionGuard = (rider, action) => {
-        if (rider.riderStatus === 'Terminated') {
-            showToast(`Please activate the terminated rider first to perform this action.`, 'error');
-            return false;
+    const getKycBadge = (status) => {
+        switch (status) {
+            case 'Verified':
+                return <span className="status-pill status-verified"><Shield size={12} /> Verified</span>;
+            case 'Pending':
+                return <span className="status-pill status-wait"><Clock size={12} /> Pending</span>;
+            case 'Rejected':
+                return <span className="status-pill status-rejected"><AlertTriangle size={12} /> Rejected</span>;
+            default:
+                return <span className="status-pill">{status}</span>;
         }
-        action();
-        return true;
     };
 
     const countries = Object.keys(locationData);
     const states = filters.country !== 'All' ? Object.keys(locationData[filters.country]) : [];
-    const cities = (filters.country !== 'All' && filters.state !== 'All') ? locationData[filters.country][filters.state] : [];
 
     return (
-        <div className="rider-table-container">
-            <div className="rider-table-controls" style={{ marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
-                        <div className="rider-search" style={{ width: '250px' }}>
-                            <Search className="search-icon" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search riders..."
-                                value={filters.search}
-                                onChange={(e) => handleFilterChange('search', e.target.value)}
-                            />
-                        </div>
+        <div className="rider-table-section">
+            {/* ── Controls Bar ── */}
+            <div className="rider-table-controls">
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flex: 1 }}>
+                    <div className="rider-search">
+                        <Search className="search-icon" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search by name or rider ID..."
+                            value={filters.search}
+                            onChange={(e) => handleFilterChange('search', e.target.value)}
+                        />
+                    </div>
 
+                    <div className="rider-filters">
                         <select
-                            className="filter-select"
+                            className="rider-filter-select"
                             value={filters.country}
                             onChange={(e) => handleFilterChange('country', e.target.value)}
                         >
@@ -100,232 +102,168 @@ const RiderList = ({
                         </select>
 
                         <select
-                            className="filter-select"
+                            className="rider-filter-select"
                             disabled={filters.country === 'All'}
                             value={filters.state}
                             onChange={(e) => handleFilterChange('state', e.target.value)}
                         >
-                            <option value="All">All States</option>
+                            <option value="All">States</option>
                             {states.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
 
                         <select
-                            className="filter-select"
-                            disabled={filters.state === 'All'}
-                            value={filters.city}
-                            onChange={(e) => handleFilterChange('city', e.target.value)}
-                        >
-                            <option value="All">All Cities</option>
-                            {cities.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-
-                        <select
-                            className="filter-select"
+                            className="rider-filter-select"
                             value={filters.kycStatus}
                             onChange={(e) => handleFilterChange('kycStatus', e.target.value)}
                         >
-                            <option value="All">All KYC Status</option>
+                            <option value="All">KYC Status</option>
                             <option value="Verified">Verified</option>
                             <option value="Pending">Pending</option>
                             <option value="Rejected">Rejected</option>
                         </select>
 
                         <button
-                            className="action-btn secondary sm"
+                            className="filter-clear-btn"
                             onClick={resetFilters}
-                            style={{
-                                height: '42px',
-                                padding: '0 16px',
-                                background: '#f1f5f9',
-                                border: '1px solid #e2e8f0',
-                                color: '#64748b'
-                            }}
+                            title="Clear Filters"
+                            style={{ width: '40px', height: '40px', borderRadius: '10px', border: '1px solid #fee2e2', background: '#fef2f2', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                         >
-                            Clear
-                        </button>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                        <button className="action-btn secondary sm" onClick={() => showToast('Exporting to PDF...', 'info')}>
-                            <FileText size={16} /> Export PDF
-                        </button>
-                        <button className="action-btn secondary sm" onClick={() => showToast('Exporting to Excel...', 'info')}>
-                            <Download size={16} /> Export Excel
+                            <X size={18} />
                         </button>
                     </div>
                 </div>
+
+                <ExportActions
+                    selectedCount={selectedRiderIds.length}
+                    onExport={(format) => showToast(`Exporting as ${format}...`)}
+                />
             </div>
 
+            {/* ── Bulk Selection Bar ── */}
+            {selectedRiderIds.length > 0 && (
+                <div className="rider-bulk-bar">
+                    <span>{selectedRiderIds.length} riders selected</span>
+                    <button onClick={() => setSelectedRiderIds([])}>Clear Selection</button>
+                </div>
+            )}
+
+            {/* ── Table ── */}
             <div style={{ overflowX: 'auto' }}>
                 <table className="dashboard-table">
                     <thead>
                         <tr>
-                            <th style={{ width: '40px' }}>
-                                <input
-                                    type="checkbox"
-                                    onChange={handleSelectAll}
-                                    checked={selectedRiderIds.length === riders.length && riders.length > 0}
-                                />
+                            <th style={{ width: '48px' }}>
+                                <div onClick={toggleSelectAll} style={{ cursor: 'pointer', display: 'flex' }}>
+                                    {selectedRiderIds.length === riders.length && riders.length > 0
+                                        ? <div style={{ color: 'var(--primary-color)' }}>◉</div>
+                                        : <div style={{ color: '#94a3b8' }}>○</div>
+                                    }
+                                </div>
                             </th>
                             <th>PROFILE</th>
                             <th>RIDER ID</th>
-                            <th>RIDER NAME</th>
-                            <th>PHONE</th>
-                            <th>EMAIL</th>
-                            <th>CITY</th>
-                            <th>VEHICLE TYPE</th>
-                            <th>VEHICLE NUMBER</th>
-                            <th>JOINED DATE</th>
-                            <th>RIDER STATUS</th>
+                            <th>NAME</th>
+                            <th>CONTACT</th>
+                            <th>LOCATION</th>
+                            <th>VEHICLE</th>
                             <th>KYC STATUS</th>
                             <th style={{ textAlign: 'center' }}>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {riders.map((rider) => (
-                            <tr key={rider.id}>
-                                <td>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedRiderIds.includes(rider.id)}
-                                        onChange={() => handleSelectOne(rider.id)}
-                                    />
-                                </td>
-                                <td>
-                                    <div className="profile-initials">
-                                        {rider.name.split(' ').map(n => n[0]).join('')}
-                                    </div>
-                                </td>
-                                <td style={{ fontWeight: 600, color: '#64748b', fontSize: '0.85rem' }}>{rider.id}</td>
-                                <td style={{ fontWeight: 600, color: '#1e293b' }}>{rider.name}</td>
-                                <td style={{ fontSize: '0.85rem', color: '#475569' }}>{rider.phone}</td>
-                                <td style={{ fontSize: '0.85rem', color: '#475569' }}>{rider.email}</td>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#475569' }}>
-                                        <MapPin size={12} color="#94a3b8" />
-                                        {rider.city}
-                                    </div>
-                                </td>
-                                <td style={{ fontSize: '0.85rem', color: '#475569' }}>{rider.vehicle}</td>
-                                <td style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>{rider.vehicleNumber}</td>
-                                <td style={{ fontSize: '0.85rem', color: '#64748b' }}>{rider.joinedDate}</td>
-                                <td>
-                                    <span className={`badge ${rider.riderStatus === 'Active' ? 'success' : 'error'}`} style={{ fontSize: '0.7rem' }}>
-                                        {rider.riderStatus}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                        <span className={`status-wait ${rider.kycStatus === 'Verified' ? 'status-verified' :
-                                            rider.kycStatus === 'Rejected' ? 'status-rejected' : ''
-                                            }`} style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
-                                            {rider.kycStatus === 'Pending' ? 'Wait - Pending' : rider.kycStatus}
-                                        </span>
-                                        {rider.kycStatus === 'Rejected' && rider.kycReason && (
-                                            <span style={{ fontSize: '0.65rem', color: '#ef4444', fontWeight: 500 }}>
-                                                Reason: {rider.kycReason}
-                                            </span>
-                                        )}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="action-btns" style={{ justifyContent: 'center', gap: '8px' }}>
-                                        <button
-                                            className="icon-btn"
-                                            onClick={() => onView(rider)}
-                                            title="View Profile"
-                                        >
-                                            <Eye size={16} />
-                                        </button>
-                                        <button
-                                            className="icon-btn"
-                                            onClick={() => handleActionGuard(rider, () => onVerify(rider))}
-                                            title="KYC Verify"
-                                            style={{
-                                                color: rider.riderStatus !== 'Terminated' ? 'var(--primary-color)' : '#94a3b8',
-                                                background: rider.riderStatus !== 'Terminated' ? '#eef2ff' : '#f1f5f9'
-                                            }}
-                                        >
-                                            <ShieldCheck size={16} />
-                                        </button>
-
-                                        {rider.riderStatus === 'Terminated' ? (
-                                            <button
-                                                className="icon-btn"
-                                                onClick={() => onActivate(rider.id)}
-                                                title="Activate Rider"
-                                                style={{ color: '#10b981', background: '#ecfdf5' }}
-                                            >
-                                                <RefreshCcw size={16} />
-                                            </button>
-                                        ) : (
-                                            <button
-                                                className="icon-btn"
-                                                onClick={() => onTerminate(rider.id)}
-                                                title="Terminate"
-                                                style={{ color: '#ef4444', background: '#fef2f2' }}
-                                            >
-                                                <UserX size={16} />
-                                            </button>
-                                        )}
-                                    </div>
+                        {riders.length === 0 ? (
+                            <tr>
+                                <td colSpan={9} style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
+                                    No riders found matching your filters.
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            riders.map((rider) => (
+                                <tr key={rider.id} className={selectedRiderIds.includes(rider.id) ? 'selected-row' : ''}>
+                                    <td>
+                                        <div onClick={() => toggleSelectRow(rider.id)} style={{ cursor: 'pointer', display: 'flex' }}>
+                                            {selectedRiderIds.includes(rider.id)
+                                                ? <div style={{ color: 'var(--primary-color)' }}>◉</div>
+                                                : <div style={{ color: '#94a3b8' }}>○</div>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className="profile-initials">
+                                            {rider.name.split(' ').map(n => n[0]).join('')}
+                                        </div>
+                                    </td>
+                                    <td><span className="rider-id-badge">{rider.id}</span></td>
+                                    <td><span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{rider.name}</span></td>
+                                    <td>
+                                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}>{rider.email}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{rider.phone}</div>
+                                    </td>
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#64748b' }}>
+                                            <MapPin size={12} /> {rider.city}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 500 }}>{rider.vehicle}</div>
+                                        <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{rider.vehicleNumber}</div>
+                                    </td>
+                                    <td>{getKycBadge(rider.kycStatus)}</td>
+                                    <td>
+                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                                            <button
+                                                className="btn btn-secondary sm"
+                                                onClick={() => onVerify(rider)}
+                                                style={{ padding: '4px 10px', fontSize: '0.75rem', border: '1px solid #e2e8f0' }}
+                                            >
+                                                KYC
+                                            </button>
+                                            <ActionButtons
+                                                onView={() => onView(rider)}
+                                                onToggleStatus={rider.riderStatus === 'Active' ? () => onActivate(rider.id, false) : () => onActivate(rider.id, true)}
+                                                onDelete={() => onTerminate(rider.id)}
+                                                isActive={rider.riderStatus === 'Active'}
+                                                type="customer"
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
 
-            {/* Pagination Controls */}
-            <div style={{
-                padding: '20px 24px',
-                borderTop: '1px solid #f1f5f9',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: '#fff'
-            }}>
-                <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+            {/* ── Pagination ── */}
+            <div className="rider-pagination">
+                <span className="rider-pagination-info">
                     Showing <strong>{Math.min(itemsPerPage * (currentPage - 1) + 1, totalCount)}</strong> to <strong>{Math.min(itemsPerPage * currentPage, totalCount)}</strong> of <strong>{totalCount}</strong> riders
-                </div>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                </span>
+                <div className="rider-pagination-btns">
                     <button
-                        className="icon-btn"
+                        className="rider-page-btn"
                         disabled={currentPage === 1}
                         onClick={() => setPagination(prev => ({ ...prev, currentPage: prev.currentPage - 1 }))}
-                        style={{ border: '1px solid #e2e8f0', borderRadius: '8px' }}
                     >
-                        <ChevronLeft size={18} />
+                        Prev
                     </button>
 
                     {[...Array(totalPages)].map((_, i) => (
                         <button
                             key={i + 1}
                             onClick={() => setPagination(prev => ({ ...prev, currentPage: i + 1 }))}
-                            style={{
-                                width: '36px',
-                                height: '36px',
-                                borderRadius: '8px',
-                                border: '1px solid',
-                                borderColor: currentPage === i + 1 ? 'var(--primary-color)' : '#e2e8f0',
-                                background: currentPage === i + 1 ? 'var(--primary-color)' : 'transparent',
-                                color: currentPage === i + 1 ? '#fff' : '#64748b',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                                transition: 'all 0.2s'
-                            }}
+                            className={`rider-page-btn ${currentPage === i + 1 ? 'active' : ''}`}
                         >
                             {i + 1}
                         </button>
                     ))}
 
                     <button
-                        className="icon-btn"
+                        className="rider-page-btn"
                         disabled={currentPage === totalPages || totalPages === 0}
                         onClick={() => setPagination(prev => ({ ...prev, currentPage: prev.currentPage + 1 }))}
-                        style={{ border: '1px solid #e2e8f0', borderRadius: '8px' }}
                     >
-                        <ChevronRight size={18} />
+                        Next
                     </button>
                 </div>
             </div>

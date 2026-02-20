@@ -1,7 +1,9 @@
 import React from 'react';
 import { Eye, ShieldCheck, Edit, Trash2, Power } from 'lucide-react';
 
-const ActionButtons = ({ onView, onPermissions, onEdit, onDelete, onToggleStatus, isActive }) => {
+const ActionButtons = ({ onView, onPermissions, onEdit, onDelete, onToggleStatus, isActive, type }) => {
+    const isCustomer = type === 'customer';
+
     return (
         <div className="action-buttons">
             {onView && (
@@ -9,7 +11,7 @@ const ActionButtons = ({ onView, onPermissions, onEdit, onDelete, onToggleStatus
                     className="action-btn action-view"
                     onClick={onView}
                     type="button"
-                    title="View Dashboard"
+                    title={isCustomer ? "View Profile" : "View Dashboard"}
                 >
                     <Eye size={18} strokeWidth={2} />
                 </button>
@@ -31,7 +33,7 @@ const ActionButtons = ({ onView, onPermissions, onEdit, onDelete, onToggleStatus
                     className={`action-btn ${isActive ? 'action-deactivate' : 'action-activate'}`}
                     onClick={onToggleStatus}
                     type="button"
-                    title={isActive ? 'Deactivate' : 'Activate'}
+                    title={isActive ? (isCustomer ? 'Block User' : 'Deactivate') : (isCustomer ? 'Activate User' : 'Activate')}
                     style={{ color: isActive ? '#f59e0b' : '#10b981' }}
                 >
                     <Power size={18} strokeWidth={2} />
@@ -54,9 +56,12 @@ const ActionButtons = ({ onView, onPermissions, onEdit, onDelete, onToggleStatus
                     className="action-btn action-delete"
                     onClick={onDelete}
                     type="button"
-                    title={isActive ? 'Deactivate before deleting' : 'Delete'}
-                    disabled={isActive}
-                    style={{ opacity: isActive ? 0.4 : 1, cursor: isActive ? 'not-allowed' : 'pointer' }}
+                    title={isCustomer ? "Terminate Account" : (isActive ? 'Deactivate before deleting' : 'Delete')}
+                    disabled={!isCustomer && isActive}
+                    style={{
+                        opacity: (!isCustomer && isActive) ? 0.4 : 1,
+                        cursor: (!isCustomer && isActive) ? 'not-allowed' : 'pointer'
+                    }}
                 >
                     <Trash2 size={18} strokeWidth={2} />
                 </button>

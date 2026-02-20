@@ -1,14 +1,13 @@
 import React from 'react';
-import { Search, X, Calendar, FileSpreadsheet, FileText } from 'lucide-react';
+import { Search, X, Calendar } from 'lucide-react';
+import ExportActions from '../../../components/common/ExportActions';
 
-const VendorOrderFilters = ({ filters, setFilters, onClear, onExport }) => {
+const VendorOrderFilters = ({ filters, setFilters, onClear, onExport, selectedCount }) => {
     const handleChange = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
 
-    const handleExport = (type) => {
-        if (onExport) onExport(type);
-    };
+    const hasActiveFilters = Object.values(filters).some(Boolean);
 
     return (
         <div className="order-filters-container">
@@ -64,67 +63,23 @@ const VendorOrderFilters = ({ filters, setFilters, onClear, onExport }) => {
                     />
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto', borderLeft: '1px solid #e2e8f0', paddingLeft: '8px' }}>
-                    <button
-                        onClick={() => onExport('excel')}
-                        title="Export Excel"
-                        style={{
-                            padding: '8px',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '10px',
-                            background: '#f0fdf4',
-                            color: '#16a34a',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
-                        <FileSpreadsheet size={18} />
-                    </button>
-                    <button
-                        onClick={() => onExport('pdf')}
-                        title="Export PDF"
-                        style={{
-                            padding: '8px',
-                            border: '1px solid #e2e8f0',
-                            borderRadius: '10px',
-                            background: '#fff1f2',
-                            color: '#e11d48',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
-                        <FileText size={18} />
-                    </button>
-                </div>
-
-                {Object.values(filters).some(Boolean) && (
+                {hasActiveFilters && (
                     <button
                         onClick={onClear}
-                        style={{
-                            width: '38px',
-                            height: '38px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '10px',
-                            border: '1px solid #fee2e2',
-                            background: '#fef2f2',
-                            color: '#ef4444',
-                            cursor: 'pointer',
-                            flexShrink: 0
-                        }}
+                        className="filter-clear-btn"
                         title="Clear Filters"
                     >
                         <X size={18} />
                     </button>
                 )}
             </div>
+
+            <div className="filter-actions" style={{ marginLeft: 'auto' }}>
+                <ExportActions selectedCount={selectedCount} onExport={onExport} />
+            </div>
         </div>
     );
 };
 
 export default VendorOrderFilters;
+

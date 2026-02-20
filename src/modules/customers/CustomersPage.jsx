@@ -86,7 +86,8 @@ const CustomersPage = () => {
         return customers.filter(c => {
             const matchesSearch = !filters.search ||
                 c.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                c.id.toLowerCase().includes(filters.search.toLowerCase());
+                c.id.toLowerCase().includes(filters.search.toLowerCase()) ||
+                c.email.toLowerCase().includes(filters.search.toLowerCase());
 
             const matchesStatus = filters.status === 'All' || c.status === filters.status;
             const matchesCountry = filters.country === 'All' || c.country === filters.country;
@@ -110,38 +111,41 @@ const CustomersPage = () => {
     };
 
     return (
-        <div className="customers-module">
-            <div className="module-header">
+        <div className="customers-module management-module">
+            <div className="customers-header">
                 <div>
-                    <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Customer Management</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>
-                        Manage your user base, track orders and handle account statuses
-                    </p>
+                    <h1>Customer Management</h1>
+                    <p>Manage your user base, track orders and handle account statuses</p>
                 </div>
-                <button className="action-btn primary" onClick={() => showToast('Customer onboarding coming soon!', 'info')}>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => showToast('Customer onboarding coming soon!', 'info')}
+                >
                     <UserPlus size={18} /> Add New Customer
                 </button>
             </div>
 
             <CustomerStats stats={stats} />
 
-            <CustomerList
-                customers={paginatedCustomers}
-                totalCount={filteredCustomers.length}
-                filters={filters}
-                setFilters={handleFilterChange}
-                pagination={pagination}
-                setPagination={setPagination}
-                locationData={LOCATION_DATA}
-                selectedCustomerIds={selectedCustomerIds}
-                setSelectedCustomerIds={setSelectedCustomerIds}
-                onView={handleView}
-                onEdit={(c) => showToast(`Editing ${c.name}`, 'info')}
-                onBlock={handleBlock}
-                onActivate={handleActivate}
-                onTerminate={handleTerminate}
-                showToast={showToast}
-            />
+            <div style={{ marginTop: '24px' }}>
+                <CustomerList
+                    customers={paginatedCustomers}
+                    totalCount={filteredCustomers.length}
+                    filters={filters}
+                    setFilters={handleFilterChange}
+                    pagination={pagination}
+                    setPagination={setPagination}
+                    locationData={LOCATION_DATA}
+                    selectedCustomerIds={selectedCustomerIds}
+                    setSelectedCustomerIds={setSelectedCustomerIds}
+                    onView={handleView}
+                    onEdit={(c) => showToast(`Editing ${c.name}`, 'info')}
+                    onBlock={handleBlock}
+                    onActivate={handleActivate}
+                    onTerminate={handleTerminate}
+                    showToast={showToast}
+                />
+            </div>
 
             {isViewModalOpen && (
                 <CustomerProfileModal

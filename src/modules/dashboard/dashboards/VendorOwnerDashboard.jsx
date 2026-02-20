@@ -13,110 +13,117 @@ import {
     MoreHorizontal,
     Edit3,
     Eye,
-    CheckCircle
+    CheckCircle,
+    ArrowUpRight,
+    ArrowDownRight,
+    BarChart3
 } from 'lucide-react';
 import './VendorDashboard.css';
 
-const StatCard = ({ title, value, subText, color, icon: Icon, trend }) => (
-    <div className="vendor-card">
-        <div className="vendor-stat-header">
-            <div className="vendor-stat-title-group">
-                <div style={{ color: color }}><Icon size={18} /></div>
-                <span className="vendor-stat-title">{title}</span>
+const StatCard = ({ title, value, subText, color, icon: Icon, trend, trendType }) => (
+    <div className="dash-stat-card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+            <div style={{ background: `${color}15`, color: color, padding: '8px', borderRadius: '10px' }}>
+                <Icon size={18} />
             </div>
-            <MoreHorizontal size={14} color="#94a3b8" />
+            {trend && (
+                <span className={`dash-stat-trend ${trendType === 'up' ? 'trend-up' : 'trend-down'}`}>
+                    {trend}
+                    {trendType === 'up' ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                </span>
+            )}
         </div>
-        <div className="vendor-stat-value-group">
-            <h3 className="vendor-stat-value">{value}</h3>
-            {trend && <span className="vendor-stat-trend">{trend}</span>}
-        </div>
-        <p className="vendor-stat-subtext">{subText}</p>
+        <span className="dash-stat-label">{title}</span>
+        <h3 className="dash-stat-value" style={{ fontSize: '1.5rem' }}>{value}</h3>
+        <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>{subText}</p>
     </div>
 );
-
-const userRole = localStorage.getItem('userRole');
-const isSuperAdmin = userRole === 'SUPER_ADMIN';
-
-
 
 const VendorOwnerDashboard = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const userRole = localStorage.getItem('userRole');
+    const isSuperAdmin = userRole === 'SUPER_ADMIN';
     const vendor = location.state?.vendor || { business: 'Vendor Dashboard', name: 'Partner' };
 
     return (
         <div className="vendor-dashboard">
             {isSuperAdmin && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
-                        <button
-                            onClick={() => navigate('/vendors')}
-                            className="icon-btn"
-                            style={{
-                                background: 'white',
-                                border: '1px solid var(--border-color)',
-                                width: '40px',
-                                height: '40px',
-                                borderRadius: '50%'
-                            }}
-                        >
-                            <ArrowLeft size={20} />
-                        </button>
-                        <div>
-                            <h1 style={{ fontSize: '1.8rem', margin: 0 }}>{vendor.business}</h1>
-                            <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>
-                                Welcome back, {vendor.name}
-                            </p>
-                        </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
+                    <button
+                        onClick={() => navigate('/vendors')}
+                        className="icon-btn-sm"
+                        style={{ background: 'white', border: '1px solid var(--border-color)', width: '40px', height: '40px' }}
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
+                    <div>
+                        <h1 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 800 }}>{vendor.business}</h1>
+                        <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem', fontWeight: 500 }}>
+                            Performance metrics for {vendor.name}
+                        </p>
                     </div>
-                )}
+                </div>
+            )}
 
             <div className="vendor-stats-grid">
-                <StatCard title="Orders Today" value="32" trend="+8" subText="Total Orders - 24ms 2/25" color="#3b82f6" icon={ShoppingBag} />
-                <StatCard title="Orders Pending" value="12" subText="Past Week: 84" color="#f59e0b" icon={Clock} />
-                <StatCard title="Revenue Today" value="$480" trend="+3%" subText="Past Week: $7,520" color="#10b981" icon={CreditCard} />
-                <StatCard title="Out of Stock" value="$18,750" trend="+3%" subText="Past Week: --" color="#06b6d4" icon={TrendingUp} />
-                <StatCard title="Out of Stock" value="5" subText="Past Week: --" color="#ef4444" icon={AlertCircle} />
+                <StatCard title="Orders Today" value="32" trend="+12%" trendType="up" subText="24 completed" color="#6366f1" icon={ShoppingBag} />
+                <StatCard title="Pending" value="12" subText="8 high priority" color="#f59e0b" icon={Clock} />
+                <StatCard title="Revenue" value="$4,280" trend="+8%" trendType="up" subText="Past 24 hours" color="#10b981" icon={CreditCard} />
+                <StatCard title="Voucher Usage" value="18%" trend="-2%" trendType="down" subText="Active campaigns" color="#8b5cf6" icon={TrendingUp} />
+                <StatCard title="Low Stock" value="5 Items" subText="Requires attention" color="#ef4444" icon={AlertCircle} />
             </div>
 
             <div className="vendor-content-grid vendor-grid-2-1">
-                <div className="vendor-card">
-                    <div className="vendor-section-header">
+                <div className="dash-card">
+                    <div className="dash-card-header">
                         <div>
-                            <h4>Weekly Sales</h4>
-                            <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Revenue This Week: <strong>$1,120</strong> <span style={{ marginLeft: '20px' }}>Orders This Week: <strong>84 +</strong></span></p>
+                            <h4>Revenue Analytics</h4>
+                            <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '4px 0 0 0' }}>Weekly performance tracking</p>
                         </div>
-                        <span className="vendor-view-all">View All <ChevronRight size={14} /></span>
+                        <div className="dash-tabs" style={{ padding: '2px' }}>
+                            <button className="tab-btn active" style={{ padding: '4px 12px', fontSize: '0.75rem' }}>Week</button>
+                            <button className="tab-btn" style={{ padding: '4px 12px', fontSize: '0.75rem' }}>Month</button>
+                        </div>
                     </div>
-                    <div className="vendor-chart-placeholder">
-                        Weekly Sales Chart Placeholder
+                    <div className="dash-card-body">
+                        <div className="vendor-chart-placeholder">
+                            <div style={{ textAlign: 'center' }}>
+                                <BarChart3 size={40} color="#e2e8f0" style={{ marginBottom: '12px' }} />
+                                <div>Revenue Visualization Placeholder</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="vendor-card">
-                    <div className="vendor-section-header">
+                <div className="dash-card">
+                    <div className="dash-card-header">
                         <h4>Recent Orders</h4>
-                        <span className="vendor-view-all">View All <ChevronRight size={14} /></span>
+                        <span className="text-btn" style={{ fontSize: '0.75rem' }}>View All</span>
                     </div>
-                    <div style={{ marginTop: '16px' }}>
-                        <table className="dashboard-table">
+                    <div style={{ padding: '0' }}>
+                        <table className="dash-table">
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
+                                    <th>Order</th>
                                     <th>Amount</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {['#10211', '#10210', '#10209'].map((id, i) => (
-                                    <tr key={id}>
+                                {[
+                                    { id: '#10211', time: '10:15 AM', amt: '$36.50', status: 'pending', label: 'Processing' },
+                                    { id: '#10210', time: '09:42 AM', amt: '$124.20', status: 'success', label: 'Delivered' },
+                                    { id: '#10209', time: 'Yesterday', amt: '$88.00', status: 'success', label: 'Delivered' },
+                                    { id: '#10208', time: 'Yesterday', amt: '$42.15', status: 'error', label: 'Cancelled' },
+                                ].map((ord, i) => (
+                                    <tr key={ord.id}>
                                         <td>
-                                            <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>{id}</div>
-                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Apr 18, 2024, 10:15 AM</div>
+                                            <div style={{ fontWeight: 700, color: 'var(--dash-text-main)' }}>{ord.id}</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{ord.time}</div>
                                         </td>
-                                        <td>$36.50</td>
-                                        <td><span className={`badge ${i === 0 ? 'pending' : i === 1 ? 'success' : 'pending'}`}>{i === 1 ? 'Delivered' : 'Pending'}</span></td>
-                                        <td><button className="mini-btn view" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>View <ChevronRight size={12} /></button></td>
+                                        <td style={{ fontWeight: 600 }}>{ord.amt}</td>
+                                        <td><span className={`badge-outline ${ord.status}`} style={{ padding: '2px 8px', fontSize: '0.65rem' }}>{ord.label}</span></td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -126,29 +133,34 @@ const VendorOwnerDashboard = () => {
             </div>
 
             <div className="vendor-content-grid vendor-grid-1-1">
-                <div className="vendor-card">
-                    <div className="vendor-section-header">
-                        <h4>Low Stock Products</h4>
-                        <span className="vendor-view-all">View All <ChevronRight size={14} /></span>
+                <div className="dash-card">
+                    <div className="dash-card-header">
+                        <h4>Inventory Alerts</h4>
+                        <button className="text-btn primary" style={{ fontSize: '0.75rem' }}>Restock All</button>
                     </div>
-                    <div style={{ marginTop: '16px' }}>
-                        <table className="dashboard-table">
+                    <div style={{ padding: '0' }}>
+                        <table className="dash-table">
                             <tbody>
                                 {[
-                                    { name: 'Garlic Powder', stock: 3, status: '8 stated' },
-                                    { name: 'Black Pepper', stock: 6, status: '5 stated' },
-                                    { name: 'Oregano', stock: 4, status: '4 stated' },
-                                    { name: 'Red Chilli Flakes', stock: 8, status: '4 stated' }
+                                    { name: 'Garlic Powder', stock: 3, unit: 'units left' },
+                                    { name: 'Black Pepper', stock: 6, unit: 'units left' },
+                                    { name: 'Red Chilli Flakes', stock: 8, unit: 'units left' }
                                 ].map((item, i) => (
                                     <tr key={i}>
-                                        <td>{item.name}</td>
                                         <td>
-                                            <span className="vendor-stock-alert">
-                                                <AlertCircle size={14} /> {item.stock}
+                                            <div className="vendor-prod-row">
+                                                <div className="vendor-prod-thumb"></div>
+                                                <span style={{ fontWeight: 600 }}>{item.name}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className="stock-alert">
+                                                <AlertCircle size={14} /> {item.stock} {item.unit}
                                             </span>
                                         </td>
-                                        <td style={{ color: '#94a3b8' }}>{item.status}</td>
-                                        <td><button className="mini-btn approve" style={{ background: '#10b981' }}>Restock</button></td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <button className="text-btn primary" style={{ fontSize: '0.8rem' }}>Order</button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -156,74 +168,84 @@ const VendorOwnerDashboard = () => {
                     </div>
                 </div>
 
-                <div className="vendor-card">
-                    <div className="vendor-section-header">
-                        <h4>Ratings & Reviews</h4>
+                <div className="dash-card">
+                    <div className="dash-card-header">
+                        <h4>Customer Feedback</h4>
                         <MoreHorizontal size={18} color="#94a3b8" />
                     </div>
-                    <div className="vendor-rating-container">
-                        <div>
-                            <h2 className="vendor-rating-big">4.9</h2>
-                            <div className="vendor-stars">
-                                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} fill="#f59e0b" />)}
-                            </div>
-                            <p className="vendor-rating-count">6291 reviews</p>
-                        </div>
-                        <div className="vendor-rating-bars">
-                            {[5, 4, 3, 2, 1].map(star => (
-                                <div key={star} className="vendor-rating-bar-row">
-                                    <span className="vendor-rating-label">{star}</span>
-                                    <div className="vendor-rating-track">
-                                        <div
-                                            className="vendor-rating-fill"
-                                            style={{
-                                                background: star >= 4 ? '#10b981' : star >= 3 ? '#f59e0b' : '#ef4444',
-                                                width: star === 5 ? '80%' : star === 4 ? '15%' : '5%'
-                                            }}
-                                        ></div>
-                                    </div>
+                    <div className="dash-card-body">
+                        <div className="vendor-rating-box">
+                            <div>
+                                <div className="rating-big-value">4.9</div>
+                                <div className="rating-stars-group">
+                                    {[1, 2, 3, 4, 5].map(i => <Star key={i} size={16} fill="#f59e0b" />)}
                                 </div>
-                            ))}
+                                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>Based on 6,291 reviews</div>
+                            </div>
+                            <div className="rating-bar-stack">
+                                {[5, 4, 3, 2, 1].map(star => (
+                                    <div key={star} className="rating-row">
+                                        <span className="rating-num">{star}</span>
+                                        <div className="rating-progress-bg">
+                                            <div
+                                                className="rating-progress-fill"
+                                                style={{
+                                                    background: star >= 4 ? '#10b981' : star >= 3 ? '#f59e0b' : '#ef4444',
+                                                    width: star === 5 ? '88%' : star === 4 ? '8%' : '2%'
+                                                }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="vendor-card">
-                <div className="vendor-section-header">
-                    <h4>Products Overview</h4>
-                    <span className="vendor-view-all">View All <ChevronRight size={14} /></span>
+            <div className="dash-card">
+                <div className="dash-card-header">
+                    <h4>Top Selling Products</h4>
+                    <span className="text-btn" style={{ fontSize: '0.75rem' }}>Full Inventory</span>
                 </div>
                 <div style={{ padding: '0' }}>
-                    <table className="dashboard-table">
+                    <table className="dash-table">
                         <thead>
                             <tr>
-                                <th>Product</th>
+                                <th>Product Details</th>
+                                <th>Category</th>
                                 <th>Stock</th>
-                                <th>Revenue</th>
-                                <th>Status</th>
+                                <th>Sales Revenue</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {[
-                                { name: 'Turmeric Powder', stock: 54, revenue: '2,310', status: 'Active' },
-                                { name: 'Ground Cumin', stock: 88, revenue: '1,520', status: 'Active' }
+                                { name: 'Turmeric Powder Premium', cat: 'Spices', stock: 54, rev: '$2,310', status: 'success' },
+                                { name: 'Ground Cumin Special', cat: 'Spices', stock: 88, rev: '$1,520', status: 'success' }
                             ].map((prod, i) => (
                                 <tr key={i}>
                                     <td>
-                                        <div className="vendor-product-info">
-                                            <div className="vendor-product-img"></div>
-                                            <strong>{prod.name}</strong>
+                                        <div className="vendor-prod-row">
+                                            <div className="vendor-prod-thumb"></div>
+                                            <div>
+                                                <div style={{ fontWeight: 700 }}>{prod.name}</div>
+                                                <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>SKU: VND-PRD-00{i}</div>
+                                            </div>
                                         </div>
                                     </td>
-                                    <td><CheckCircle size={14} color="#10b981" style={{ marginRight: '8px' }} /> {prod.stock}</td>
-                                    <td>${prod.revenue}</td>
-                                    <td><span className="badge success">{prod.status}</span></td>
+                                    <td><span style={{ fontWeight: 600 }}>{prod.cat}</span></td>
                                     <td>
-                                        <div className="action-btns">
-                                            <button className="mini-btn view" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Edit3 size={12} /> Edit</button>
-                                            <button className="mini-btn view" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Eye size={12} /> View</button>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <CheckCircle size={14} color="#10b981" />
+                                            <span style={{ fontWeight: 600 }}>{prod.stock}</span>
+                                        </div>
+                                    </td>
+                                    <td style={{ fontWeight: 700 }}>{prod.rev}</td>
+                                    <td>
+                                        <div style={{ display: 'flex', gap: '12px' }}>
+                                            <button className="icon-btn-sm" title="Edit"><Edit3 size={16} /></button>
+                                            <button className="icon-btn-sm" title="View Analytics"><Eye size={16} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -234,7 +256,6 @@ const VendorOwnerDashboard = () => {
             </div>
         </div>
     );
-
 };
 
 export default VendorOwnerDashboard;

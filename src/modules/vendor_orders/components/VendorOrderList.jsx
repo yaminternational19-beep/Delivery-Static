@@ -51,7 +51,7 @@ const VendorOrderList = ({ orders, selectedRows, onSelectRow, onSelectAll, onVie
 
     return (
         <div className="o-table-container">
-            <table className="dashboard-table" style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1600px' }}>
+            <table className="dashboard-table" style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1400px' }}>
                 <thead>
                     <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                         <th style={{ padding: '16px 12px', textAlign: 'left', width: '40px' }}>
