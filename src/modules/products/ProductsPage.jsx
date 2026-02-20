@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Download, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductStats from './components/ProductStats';
 import ProductFilters from './components/ProductFilters';
 import ProductList from './components/ProductList';
 import Toast from '../../components/common/Toast/Toast';
 import './Products.css';
 
-// Mock Data Generation
+// Mock Data Generation with better demo images
 const MOCK_PRODUCTS = Array.from({ length: 50 }, (_, i) => ({
     id: `PROD-${1000 + i}`,
     itemId: `ITEM-${1000 + i}`,
@@ -20,12 +20,20 @@ const MOCK_PRODUCTS = Array.from({ length: 50 }, (_, i) => ({
     vendorEmail: i % 5 === 0 ? 'john.doe@techsolution.com' : 'jane.smith@grocerymart.in',
     category: i % 3 === 0 ? 'Electronics' : i % 3 === 1 ? 'Groceries' : 'Fashion',
     subCategory: i % 3 === 0 ? (i % 2 === 0 ? 'Mobile' : 'Laptop') : (i % 3 === 1 ? 'Drinks' : 'Shoes'),
-    MRP: (i + 1) * 150,
-    image: `https://source.unsplash.com/random/200x200?product,${i}`,
+    MRP: (i + 1) * 150 + 99,
+    // Using a more reliable image source for demo
+    image: `https://images.unsplash.com/photo-${[
+        '1505740420928-5e560c06d30e', // Headphones
+        '1592318763191-3485607062ec', // Tea
+        '1523275335684-37898b6baf30', // Watch
+        '1542291026-7eec264c27ff', // Shoes
+        '1526170375885-4d8ec6477614', // Camera
+        '1503602642637-0cf0299b66ba'  // Product
+    ][i % 6]}?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80`,
     isApproved: i % 10 < 7, // 70% approved
     rejectionReason: i % 10 === 8 ? 'Incorrect image format provided' : i % 10 === 9 ? 'Price exceeds range' : null,
     raisedDate: new Date(Date.now() - 86400000 * (i + 5)).toISOString().split('T')[0],
-    actionDate: i % 10 < 8 ? new Date(Date.now() - 86400000 * i).toISOString().split('T')[0] : null,
+    actionDate: (i % 10 < 8 || i % 10 >= 8) ? new Date(Date.now() - 86400000 * i).toISOString().split('T')[0] : null,
     createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString()
 }));
 
@@ -39,8 +47,6 @@ const ProductsPage = () => {
         brand: '',
         category: '',
         subCategory: '',
-        fromDate: '',
-        toDate: '',
         isApproved: ''
     });
     const [pagination, setPagination] = useState({
@@ -55,50 +61,31 @@ const ProductsPage = () => {
     // Simulate Fetching Data
     useEffect(() => {
         setLoading(true);
-        // Simulate API delay
         setTimeout(() => {
             setProducts(MOCK_PRODUCTS);
             setLoading(false);
         }, 800);
     }, []);
 
-    // Filtering Logic (Client-side simulation of Backend Logic)
+    // Filtering Logic
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
-            // Search
             const searchMatch = !filters.search ||
                 product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
                 product.brand.toLowerCase().includes(filters.search.toLowerCase()) ||
                 product.vendorCompanyName.toLowerCase().includes(filters.search.toLowerCase());
 
-            // Vendor
             const vendorMatch = !filters.vendor || product.vendorCompanyName.includes(filters.vendor);
-
-            // Brand
             const brandMatch = !filters.brand || product.brand === filters.brand;
-
-            // Category
             const categoryMatch = !filters.category || product.category === filters.category;
-
-            // Sub Category
             const subCategoryMatch = !filters.subCategory || product.subCategory === filters.subCategory;
 
-            // Status
             const statusMatch = filters.isApproved === '' ||
                 (filters.isApproved === 'true' && product.isApproved) ||
                 (filters.isApproved === 'false' && !product.isApproved && !product.rejectionReason) ||
                 (filters.isApproved === 'rejected' && product.rejectionReason);
 
-            // Date Range
-            let dateMatch = true;
-            if (filters.fromDate) {
-                dateMatch = dateMatch && new Date(product.raisedDate) >= new Date(filters.fromDate);
-            }
-            if (filters.toDate) {
-                dateMatch = dateMatch && new Date(product.raisedDate) <= new Date(filters.toDate);
-            }
-
-            return searchMatch && vendorMatch && brandMatch && categoryMatch && subCategoryMatch && statusMatch && dateMatch;
+            return searchMatch && vendorMatch && brandMatch && categoryMatch && subCategoryMatch && statusMatch;
         });
     }, [products, filters]);
 
@@ -116,7 +103,6 @@ const ProductsPage = () => {
             total: filteredProducts.length,
             totalPages: Math.ceil(filteredProducts.length / prev.limit)
         }));
-        // Reset to page 1 if filters change
         if (pagination.page > Math.ceil(filteredProducts.length / pagination.limit) && filteredProducts.length > 0) {
             setPagination(prev => ({ ...prev, page: 1 }));
         }
@@ -177,90 +163,77 @@ const ProductsPage = () => {
         total: products.length,
         active: products.filter(p => p.isApproved).length,
         pending: products.filter(p => !p.isApproved && !p.rejectionReason).length,
-        outOfStock: products.filter(p => p.rejectionReason).length // Use for rejected
+        outOfStock: products.filter(p => p.rejectionReason).length
     };
 
     return (
         <div className="products-module management-module">
             {/* Header */}
-            <div className="products-header" style={{ marginBottom: '24px' }}>
+            <div className="products-header">
                 <div>
                     <h1 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700, color: 'var(--text-primary)' }}>Product Approvals</h1>
                     <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '4px' }}>
                         Review and manage product listings from your vendors
                     </p>
                 </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                    <button
-                        className="action-btn secondary"
-                        onClick={() => handleExport('excel')}
-                    >
-                        <FileText size={18} /> Export Excel
-                    </button>
-                    <button
-                        className="action-btn secondary"
-                        onClick={() => handleExport('pdf')}
-                    >
-                        <Download size={18} /> Export PDF
-                    </button>
-                </div>
             </div>
 
             {/* Stats */}
             <ProductStats stats={stats} />
 
-            {/* Filter Bar */}
-            <ProductFilters
-                filters={filters}
-                setFilters={setFilters}
-                onClear={() => setFilters({
-                    search: '', vendor: '', brand: '', category: '', subCategory: '', fromDate: '', toDate: '', isApproved: ''
-                })}
-            />
+            {/* Combined Filters and Table Section */}
+            <div className="products-table-section">
+                <ProductFilters
+                    filters={filters}
+                    setFilters={setFilters}
+                    selectedCount={selectedRows.length}
+                    onExport={handleExport}
+                    onClear={() => setFilters({
+                        search: '', vendor: '', brand: '', category: '', subCategory: '', isApproved: ''
+                    })}
+                />
 
-            {/* Product List Table */}
-            {loading ? (
-                <div style={{ padding: '80px', textAlign: 'center', background: 'white', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                    <div className="spinner" style={{ marginBottom: '16px' }}></div>
-                    <div style={{ color: '#64748b', fontWeight: 500 }}>Fetching latest products...</div>
-                </div>
-            ) : (
-                <>
+                {loading ? (
+                    <div style={{ padding: '80px', textAlign: 'center', background: 'white', borderTop: 'none' }}>
+                        <div className="spinner" style={{ marginBottom: '16px', margin: '0 auto 16px' }}></div>
+                        <div style={{ color: '#64748b', fontWeight: 500 }}>Fetching latest products...</div>
+                    </div>
+                ) : (
                     <ProductList
                         products={paginatedData}
-                        selectedRows={selectedRows}
                         onAction={handleAction}
+                        selectedRows={selectedRows}
                         onSelectRow={handleSelectRow}
                         onSelectAll={handleSelectAll}
                     />
+                )}
 
-                    {/* Pagination Controls */}
-                    <div style={{ padding: '16px 20px', background: 'white', border: '1px solid var(--border-color)', borderTop: 'none', borderRadius: '0 0 12px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-                            Showing {Math.min((pagination.page - 1) * pagination.limit + 1, pagination.total)} - {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} products
+                {/* Pagination Controls */}
+                <div className="c-pagination" style={{ borderTop: '1px solid var(--border-color)', background: '#f8fafc' }}>
+                    <span className="c-pagination-info">
+                        Showing {Math.min((pagination.page - 1) * pagination.limit + 1, pagination.total)}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} products
+                    </span>
+                    <div className="c-pagination-btns" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button
+                            className="c-page-btn"
+                            disabled={pagination.page === 1}
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                        >
+                            <ChevronLeft size={14} /> Prev
+                        </button>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', padding: '0 4px', display: 'flex', alignItems: 'center' }}>
+                            {pagination.page} / {pagination.totalPages || 1}
                         </span>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <button
-                                className="mini-btn secondary"
-                                disabled={pagination.page === 1}
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-                            >
-                                Previous
-                            </button>
-                            <span style={{ display: 'flex', alignItems: 'center', padding: '0 8px', fontSize: '0.9rem', fontWeight: 500 }}>
-                                Page {pagination.page} of {pagination.totalPages || 1}
-                            </span>
-                            <button
-                                className="mini-btn secondary"
-                                disabled={pagination.page === pagination.totalPages || pagination.totalPages === 0}
-                                onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-                            >
-                                Next
-                            </button>
-                        </div>
+                        <button
+                            className="c-page-btn"
+                            disabled={pagination.page === pagination.totalPages || pagination.totalPages === 0}
+                            onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                        >
+                            Next <ChevronRight size={14} />
+                        </button>
                     </div>
-                </>
-            )}
+                </div>
+            </div>
 
             {toast.show && (
                 <Toast

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Calendar, RotateCcw } from 'lucide-react';
+import { Search, Filter, CheckSquare, Square, ChevronLeft, ChevronRight } from 'lucide-react';
 import ExportActions from '../../../components/common/ExportActions';
 import ActionButtons from '../../../components/common/ActionButtons';
 
@@ -89,31 +89,31 @@ const SubAdminList = ({ onEdit, onEditPermissions, onDeactivate, onDelete, onSho
 
     return (
         <div className="list-wrapper">
-            {/* Filter Section */}
-            <div className="filter-bar">
-                <div style={{ display: 'flex', gap: '6px', flex: 1, alignItems: 'center' }}>
-                    <div className="filter-search" style={{ flex: '0 1 300px' }}>
-                        <Search className="search-icon" size={18} />
+            {/* Filter Bar */}
+            <div className="v-table-controls">
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div className="v-search">
+                        <Search className="search-icon" size={16} />
                         <input
                             type="text"
-                            className="search-input"
                             placeholder="Search by name, email..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
 
-                    <select
-                        className="filter-select"
-                        style={{ width: '160px' }}
-                        value={selectedRole}
-                        onChange={(e) => setSelectedRole(e.target.value)}
-                    >
-                        <option value="">All Roles</option>
-                        {roles.map(role => (
-                            <option key={role} value={role}>{role}</option>
-                        ))}
-                    </select>
+                    <div className="input-with-icon" style={{ width: '180px' }}>
+                        <Filter size={15} className="field-icon" />
+                        <select
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value)}
+                        >
+                            <option value="">All Roles</option>
+                            {roles.map(role => (
+                                <option key={role} value={role}>{role}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
 
                 <div className="filter-controls">
@@ -124,18 +124,29 @@ const SubAdminList = ({ onEdit, onEditPermissions, onDeactivate, onDelete, onSho
                 </div>
             </div>
 
+            {/* Bulk Actions Bar */}
+            {selectedSubAdmins.length > 0 && (
+                <div className="c-bulk-bar">
+                    <span>{selectedSubAdmins.length} sub-admins selected</span>
+                    <button onClick={() => setSelectedSubAdmins([])}>Clear Selection</button>
+                </div>
+            )}
+
             {/* Table Section */}
-            <div className="table-container">
+            <div className="table-container" style={{ borderTop: 'none', borderRadius: '0' }}>
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th className="col-checkbox">
-                                <input
-                                    type="checkbox"
-                                    className="checkbox-input"
-                                    checked={filteredSubAdmins.length > 0 && selectedSubAdmins.length === filteredSubAdmins.length}
-                                    onChange={handleSelectAll}
-                                />
+                            <th style={{ width: '48px' }}>
+                                <div
+                                    onClick={() => handleSelectAll({ target: { checked: selectedSubAdmins.length !== filteredSubAdmins.length } })}
+                                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {filteredSubAdmins.length > 0 && selectedSubAdmins.length === filteredSubAdmins.length
+                                        ? <CheckSquare size={17} color="var(--primary-color)" />
+                                        : <Square size={17} color="#94a3b8" />
+                                    }
+                                </div>
                             </th>
                             <th>Profile</th>
                             <th>Full Name</th>
@@ -151,13 +162,16 @@ const SubAdminList = ({ onEdit, onEditPermissions, onDeactivate, onDelete, onSho
                     <tbody>
                         {filteredSubAdmins.map(user => (
                             <tr key={user.id} style={{ background: selectedSubAdmins.includes(user.id) ? '#f8fafc' : 'white' }}>
-                                <td className="col-checkbox">
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox-input"
-                                        checked={selectedSubAdmins.includes(user.id)}
-                                        onChange={() => handleSelectOne(user.id)}
-                                    />
+                                <td>
+                                    <div
+                                        onClick={() => handleSelectOne(user.id)}
+                                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        {selectedSubAdmins.includes(user.id)
+                                            ? <CheckSquare size={17} color="var(--primary-color)" />
+                                            : <Square size={17} color="#94a3b8" />
+                                        }
+                                    </div>
                                 </td>
                                 <td>
                                     <div className="profile-avatar" style={{ width: '36px', height: '36px', border: '1px solid #e2e8f0' }}>
@@ -217,19 +231,18 @@ const SubAdminList = ({ onEdit, onEditPermissions, onDeactivate, onDelete, onSho
             </div>
 
             {/* Pagination Section */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px', padding: '16px 20px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e6eaf0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Showing</span>
-                    <span style={{ padding: '4px 10px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>
-                        {filteredSubAdmins.length}
-                    </span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>of</span>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>{subAdmins.length}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>entries</span>
-                </div>
-                <div className="btn-group">
-                    <button className="btn btn-secondary" style={{ height: '34px', fontSize: '13px' }} disabled>Previous</button>
-                    <button className="btn btn-secondary" style={{ height: '34px', fontSize: '13px' }}>Next</button>
+            {/* Pagination — updated to c-pagination */}
+            <div className="c-pagination" style={{ borderTop: 'none', background: 'white', border: '1px solid var(--border-color)', borderRadius: '0 0 16px 16px' }}>
+                <span className="c-pagination-info">
+                    Showing {filteredSubAdmins.length} of {subAdmins.length} entries
+                </span>
+                <div className="c-pagination-btns">
+                    <button className="c-page-btn" disabled>
+                        <ChevronLeft size={16} /> Prev
+                    </button>
+                    <button className="c-page-btn">
+                        Next <ChevronRight size={16} />
+                    </button>
                 </div>
             </div>
         </div>

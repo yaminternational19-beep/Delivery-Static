@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, CheckSquare, Square, Filter } from 'lucide-react';
 import ExportActions from '../../../components/common/ExportActions';
 import ActionButtons from '../../../components/common/ActionButtons';
 
@@ -138,30 +138,30 @@ const VendorList = ({ onEdit, onStatusToggle, onDelete, showToast, onTabChange }
     return (
         <div className="list-wrapper">
             {/* Filter Bar */}
-            <div className="filter-bar">
-                <div style={{ display: 'flex', gap: '8px', flex: 1, alignItems: 'center' }}>
-                    <div className="filter-search" style={{ flex: '0 1 300px' }}>
-                        <Search className="search-icon" size={18} />
+            <div className="v-table-controls">
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div className="v-search">
+                        <Search className="search-icon" size={16} />
                         <input
                             type="text"
-                            className="search-input"
                             placeholder="Search by ID, name, business, address..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
 
-                    <select
-                        className="filter-select"
-                        style={{ width: '160px' }}
-                        value={tierFilter}
-                        onChange={(e) => setTierFilter(e.target.value)}
-                    >
-                        <option value="All">All Tiers</option>
-                        <option value="Platinum">Platinum</option>
-                        <option value="Gold">Gold</option>
-                        <option value="Silver">Silver</option>
-                    </select>
+                    <div className="input-with-icon" style={{ width: '180px' }}>
+                        <Filter size={15} className="field-icon" />
+                        <select
+                            value={tierFilter}
+                            onChange={(e) => setTierFilter(e.target.value)}
+                        >
+                            <option value="All">All Tiers</option>
+                            <option value="Platinum">Platinum</option>
+                            <option value="Gold">Gold</option>
+                            <option value="Silver">Silver</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className="filter-controls">
@@ -177,13 +177,16 @@ const VendorList = ({ onEdit, onStatusToggle, onDelete, showToast, onTabChange }
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th className="col-checkbox">
-                                <input
-                                    type="checkbox"
-                                    className="checkbox-input"
-                                    checked={filteredVendors.length > 0 && selectedRows.length === filteredVendors.length}
-                                    onChange={toggleSelectAll}
-                                />
+                            <th style={{ width: '48px' }}>
+                                <div
+                                    onClick={toggleSelectAll}
+                                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {filteredVendors.length > 0 && selectedRows.length === filteredVendors.length
+                                        ? <CheckSquare size={17} color="var(--primary-color)" />
+                                        : <Square size={17} color="#94a3b8" />
+                                    }
+                                </div>
                             </th>
                             <th>Image</th>
                             <th>Vendor ID</th>
@@ -203,13 +206,16 @@ const VendorList = ({ onEdit, onStatusToggle, onDelete, showToast, onTabChange }
                                 style={{ background: selectedRows.includes(vendor.id) ? '#f8fafc' : 'white' }}
                             >
                                 {/* Checkbox */}
-                                <td className="col-checkbox">
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox-input"
-                                        checked={selectedRows.includes(vendor.id)}
-                                        onChange={() => toggleSelectRow(vendor.id)}
-                                    />
+                                <td>
+                                    <div
+                                        onClick={() => toggleSelectRow(vendor.id)}
+                                        style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        {selectedRows.includes(vendor.id)
+                                            ? <CheckSquare size={17} color="var(--primary-color)" />
+                                            : <Square size={17} color="#94a3b8" />
+                                        }
+                                    </div>
                                 </td>
 
                                 {/* Vendor Image */}
@@ -308,29 +314,16 @@ const VendorList = ({ onEdit, onStatusToggle, onDelete, showToast, onTabChange }
                 </table>
             </div>
 
-            {/* Pagination */}
-            <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                marginTop: '24px', padding: '16px 20px',
-                background: '#f8fafc', borderRadius: '12px', border: '1px solid #e6eaf0'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Showing</span>
-                    <span style={{
-                        padding: '4px 10px', background: 'white', border: '1px solid #e2e8f0',
-                        borderRadius: '6px', fontSize: '12px', fontWeight: 700, color: '#1e293b'
-                    }}>
-                        {filteredVendors.length}
-                    </span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>of</span>
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>{vendors.length}</span>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>entries</span>
-                </div>
-                <div className="btn-group">
-                    <button className="btn btn-secondary" style={{ height: '34px', fontSize: '13px' }} disabled>
-                        <ChevronLeft size={16} /> Previous
+            {/* Pagination — updated to c-pagination */}
+            <div className="c-pagination" style={{ borderTop: 'none', background: 'white', border: '1px solid var(--border-color)', borderRadius: '0 0 16px 16px' }}>
+                <span className="c-pagination-info">
+                    Showing {filteredVendors.length} of {vendors.length} entries
+                </span>
+                <div className="c-pagination-btns">
+                    <button className="c-page-btn" disabled>
+                        <ChevronLeft size={16} /> Prev
                     </button>
-                    <button className="btn btn-secondary" style={{ height: '34px', fontSize: '13px' }}>
+                    <button className="c-page-btn">
                         Next <ChevronRight size={16} />
                     </button>
                 </div>
