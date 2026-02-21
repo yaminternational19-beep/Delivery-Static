@@ -14,9 +14,9 @@ const DashboardPage = () => {
     const [isVendorView, setIsVendorView] = useState(false);
     const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
 
-    const handleGroceryClick = () => {
-        setToast({ show: true, message: 'Grocery module is coming soon!', type: 'info' });
-    };
+    // const handleGroceryClick = () => {
+    //     setToast({ show: true, message: 'Grocery module is coming soon!', type: 'info' });
+    // };
 
     const handleexportClick = () => {
         setToast({ show: true, message: 'Export functionality is under development!', type: 'info' });

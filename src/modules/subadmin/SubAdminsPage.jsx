@@ -75,13 +75,15 @@ const SubAdminsPage = () => {
                     className={activeTab === 'users' ? 'active' : ''}
                     onClick={() => setActiveTab('users')}
                 >
-                    <Shield size={16} /> Sub-Admins
+                    <Shield size={14} />
+                     Sub-Admins
                 </button>
                 <button
                     className={activeTab === 'logs' ? 'active' : ''}
                     onClick={() => setActiveTab('logs')}
                 >
-                    <Terminal size={16} /> Access Logs
+                    <Terminal size={14} /> 
+                    Access Logs
                 </button>
             </div>
 

@@ -101,7 +101,7 @@ const AccessLogs = ({ onShowToast }) => {
                     </div>
 
                     <div className="input-with-icon" style={{ width: '160px' }}>
-                        <Terminal size={15} className="field-icon" />
+                        {/* <Terminal size={15} className="field-icon" /> */}
                         <select
                             value={filter.action}
                             onChange={(e) => setFilter({ ...filter, action: e.target.value })}

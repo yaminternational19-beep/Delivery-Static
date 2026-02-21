@@ -15,7 +15,8 @@ import VehicleTypesPage from '../modules/vehicles/VehicleTypesPage';
 import { SubCategoriesPage } from '../modules/subcategories';
 import BrandsPage from '../modules/brands/BrandsPage';
 import QuantityPage from '../modules/quantity';
-
+import ProfilePage from '../pages/profilepage';
+import NotificationsPage from '../pages/NotificationsPage';
 
 //vendor routes
 import VendorProductPage from '../modules/vendor_products/VendorProductsPage';
@@ -53,7 +54,7 @@ const GlobalRoutes = () => {
                 }
             />
 
-            <Route path="/users" element={<Navigate to="/subadmin" replace />} />
+            {/* <Route path="/users" element={<Navigate to="/subadmin" replace />} /> */}
             <Route
                 path="/subadmin"
                 element={
@@ -175,6 +176,23 @@ const GlobalRoutes = () => {
                 element={
                     <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN", "SUB_ADMIN", "VENDOR_OWNER"]}>
                         <VendorOrdersPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/profile"
+                element={
+                    <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN", "SUB_ADMIN", "VENDOR_OWNER"]}>
+                        <ProfilePage />
+                    </ProtectedRoute>
+                }
+            />
+             <Route
+                path="/notifications"
+                element={
+                    <ProtectedRoute allowedRoles={["SUPER_ADMIN", "ADMIN", "SUB_ADMIN", "VENDOR_OWNER"]}>
+                        <NotificationsPage />
                     </ProtectedRoute>
                 }
             />

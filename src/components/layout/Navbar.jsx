@@ -45,7 +45,7 @@ const Navbar = ({ onMenuClick }) => {
             </div>
 
             <div className="header-actions">
-                <button className="btn-icon">
+                <button className="btn-icon" onClick={() => navigate('/notifications')}>
                     <Bell size={20} />
                 </button>
 
@@ -60,7 +60,7 @@ const Navbar = ({ onMenuClick }) => {
 
                     {showDropdown && (
                         <div className="header-dropdown">
-                            <button className="dropdown-item">
+                            <button className="dropdown-item" onClick={() => navigate('/profile')}>
                                 <User size={16} /> My Profile
                             </button>
                             <button

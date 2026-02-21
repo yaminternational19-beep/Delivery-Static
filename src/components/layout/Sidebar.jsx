@@ -98,7 +98,7 @@ const Sidebar = () => {
                         <div style={{ padding: '6px', background: '#6366f1', borderRadius: '8px', color: 'white', display: 'flex' }}>
                             <Truck size={20} />
                         </div>
-                        <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#0f172a', letterSpacing: '-0.5px' }}>DELIVERY</span>
+                        <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#0f172a', letterSpacing: '-0.5px' }}>Shipzzy</span>
                     </div>
                 )}
                 <button
