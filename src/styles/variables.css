@@ -18,7 +18,8 @@
     --info-bg: #eff6ff;
 
     /* Background Colors */
-    --bg-body: #f8fafc;
+    --bg-app: #f4f7fe;
+    --bg-body: #f4f7fe;
     --bg-sidebar: #ffffff;
     --bg-header: #ffffff;
     --bg-card: #ffffff;
@@ -62,7 +63,7 @@
 
     /* Layout */
     --sidebar-width: 260px;
-    --header-height: 90px;
-    --transition-fast: 0.15s ease;
+    --header-height: 72px;
+    --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
 }

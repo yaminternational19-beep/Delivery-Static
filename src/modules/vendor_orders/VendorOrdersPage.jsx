@@ -213,9 +213,9 @@ const VendorOrdersPage = () => {
                             <UserCheck size={18} /> Assign Selection ({selectedRows.length})
                         </button>
                     )}
-                    <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
+                    {/* <button className="btn btn-primary" onClick={() => setIsCreateModalOpen(true)}>
                         <Plus size={18} /> New Manual Order
-                    </button>
+                    </button> */}
                 </div>
             </div>
 

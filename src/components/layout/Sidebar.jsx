@@ -34,7 +34,7 @@ const Sidebar = () => {
 
     // Update global CSS variable for layout sync
     React.useEffect(() => {
-        const width = isCollapsed ? '80px' : '260px'; // Matching variable.css
+        const width = isCollapsed ? '80px' : '260px';
         document.documentElement.style.setProperty('--sidebar-width', width);
     }, [isCollapsed]);
 
@@ -43,25 +43,19 @@ const Sidebar = () => {
 
     const menuItems = [
         { name: "Dashboard", key: "DASHBOARD", icon: LayoutDashboard, path: "/" },
-        // { name: "Dashboard", key: "DASHBOARD", icon: LayoutDashboard, path: "/", group: "PLATFORM" },
         { name: "Sub-Admins", key: "SUB_ADMINS", icon: Users, path: "/subadmin", group: "MANAGEMENT" },
         { name: "Vendors", key: "VENDORS", icon: Truck, path: "/vendors", group: "MANAGEMENT" },
-
         { name: "Categories", key: "CATEGORIES", icon: Layers, path: "/categories", group: "MANAGEMENT" },
         { name: "Sub-Categories", key: "SUBCATEGORIES", icon: ListTree, path: "/sub-categories", group: "MANAGEMENT" },
         { name: "Brands", key: "BRANDS", icon: Award, path: "/brands", group: "MANAGEMENT" },
-
         { name: "Products", key: "PRODUCTS", icon: Package, path: "/products", group: "MANAGEMENT" },
         { name: "Products", key: "VENDOR_PRODUCTS", icon: Package, path: "/vendor-products", group: "MANAGEMENT" },
         { name: "Orders", key: "ORDERS", icon: ShoppingBag, path: "/orders", group: "MANAGEMENT" },
         { name: "Orders", key: "VENDOR_ORDERS", icon: ShoppingBag, path: "/vendor-orders", group: "MANAGEMENT" },
-
         { name: "Vehicle Types", key: "VEHICLES", icon: Car, path: "/vehicles", group: "MANAGEMENT" },
         { name: "Quantity", key: "QUANTITY", icon: Scale, path: "/quantity", group: "MANAGEMENT" },
         { name: "Riders", key: "RIDERS", icon: Bike, path: "/riders", group: "MANAGEMENT" },
         { name: "Customers", key: "CUSTOMERS", icon: Users, path: "/customers", group: "MANAGEMENT" },
-
-
         { name: "Tickets", key: "TICKETS", icon: Ticket, path: "/tickets", group: "SUPPORT" },
         { name: "Refunds", key: "REFUNDS", icon: Undo2, path: "/refunds", group: "SUPPORT" },
         { name: "Payouts", key: "PAYOUTS", icon: CreditCard, path: "/payouts", group: "FINANCE" },
@@ -92,26 +86,18 @@ const Sidebar = () => {
 
     return (
         <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
-            <div className="sidebar-header" style={{ justifyContent: isCollapsed ? 'center' : 'space-between', padding: '0 24px' }}>
+            <div className="sidebar-header">
                 {!isCollapsed && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ padding: '6px', background: '#6366f1', borderRadius: '8px', color: 'white', display: 'flex' }}>
+                    <div className="sidebar-logo">
+                        <div className="logo-icon">
                             <Truck size={20} />
                         </div>
-                        <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#0f172a', letterSpacing: '-0.5px' }}>Shipzzy</span>
+                        <span className="logo-text">Shipzzy</span>
                     </div>
                 )}
                 <button
+                    className="sidebar-toggle"
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    style={{
-                        padding: '6px',
-                        borderRadius: '6px',
-                        hover: { background: '#f1f5f9' },
-                        color: '#64748b',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
                 >
                     {isCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
                 </button>
@@ -119,21 +105,13 @@ const Sidebar = () => {
 
             <div className="sidebar-content">
                 {Object.keys(groupedMenu).map(groupKey => (
-                    <div key={groupKey} style={{ marginBottom: '24px' }}>
+                    <div key={groupKey} className="sidebar-group">
                         {!isCollapsed && (
-                            <span style={{
-                                fontSize: '0.75rem',
-                                fontWeight: 700,
-                                color: '#94a3b8',
-                                textTransform: 'uppercase',
-                                padding: '0 12px 8px',
-                                display: 'block',
-                                letterSpacing: '0.05em'
-                            }}>
+                            <span className="sidebar-group-label">
                                 {groups[groupKey]}
                             </span>
                         )}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div className="sidebar-nav-list">
                             {groupedMenu[groupKey].map((item) => {
                                 const Icon = item.icon;
                                 return (
@@ -142,7 +120,6 @@ const Sidebar = () => {
                                         to={item.path}
                                         className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
                                         title={isCollapsed ? item.name : ''}
-                                        style={isCollapsed ? { justifyContent: 'center', padding: '12px' } : {}}
                                     >
                                         <Icon size={20} />
                                         {!isCollapsed && <span>{item.name}</span>}

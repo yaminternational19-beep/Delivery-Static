@@ -1,13 +1,13 @@
 :root {
     --profile-orange: #ff5a1f;
     --profile-orange-hover: #e64a10;
-    --profile-bg: #fdfdfd;
-    --profile-sidebar-bg: #ffffff;
-    --profile-input-bg: #ffffff;
-    --profile-text-main: #1a1a1a;
-    --profile-text-muted: #9e9e9e;
-    --profile-border: #f0f0f0;
-    --profile-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    --profile-bg: var(--bg-app);
+    --profile-sidebar-bg: var(--bg-sidebar);
+    --profile-input-bg: var(--bg-card);
+    --profile-text-main: var(--text-primary);
+    --profile-text-muted: var(--text-secondary);
+    --profile-border: var(--border-color);
+    --profile-shadow: var(--shadow-sm);
 }
 
 .profile-page-wrapper {
